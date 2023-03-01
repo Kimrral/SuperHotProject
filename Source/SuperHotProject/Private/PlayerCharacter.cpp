@@ -1,11 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
+#include "PlayerCharacter.h"
 #include "Engine/LocalPlayer.h"
 #include "EnhancedInputComponent.h"
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "PlayerCharacter.h"
+#include "Blueprint/UserWidget.h"
+
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -36,6 +38,9 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 	
+	crosshairUI = CreateWidget<UUserWidget>(GetWorld(), crosshairFactory);
+	crosshairUI->AddToViewport();
+
 }
 
 // Called every frame

@@ -20,7 +20,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(VisibleAnywhere, Category = "VRCamera")
+	UPROPERTY(BlueprintReadOnly, Category = "VRCamera")
 	class UCameraComponent* VRCamera;
 
 public:	
@@ -52,6 +52,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		float YMovement;
 
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UUserWidget> crosshairFactory;
+	UPROPERTY(BlueprintReadOnly)
+		class UUserWidget* crosshairUI;
 
 
 };
