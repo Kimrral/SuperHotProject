@@ -6,13 +6,11 @@
 #include "GameFramework/Actor.h"
 #include "BaseWeapon.generated.h"
 
+UENUM(BlueprintType)
 enum class EWeaponState : uint8 {
-	Idle,
-	Fire,
-	Reload,
-	Destroy,
-	Drop,
-	PickUp,
+	Idle,       // 초기상태
+	Equipped,   // 장착상태
+	Pickup     // 그랩 할 수 있는 상태
 };
 
 UCLASS()
@@ -28,32 +26,45 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+
+private:
+	UPROPERTY(EditAnywhere, Category = Settings)
+	float FireRate = 0.5f;
+
+	UPROPERTY(EditAnywhere, Category = WeaponState)
+	EWeaponState mState = EWeaponState::Idle;
+
+	FTimerHandle FireTimerHandle;
+
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+
+	UPROPERTY(EditAnywhere, Category = Settings)
+		class UBoxComponent* BoxComp;
+
+	UPROPERTY(EditAnywhere, Category = Settgins)
+		class USkeletalMeshComponent* MeshComp;
+
+	UFUNCTION(BlueprintCallable)
+	virtual void DoFire();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void FirePressed();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void FireRelease();
+
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = WeaponState)
-		EWeaponState mState = EWeaponState::Idle;
+	FORCEINLINE float GetFireRate() { return FireRate; }
+	FORCEINLINE void SetFireRate(float rate) { FireRate = rate <= 0 ? 0.5 : rate; }
 
-	UPROPERTY(VisibleAnywhere, Category = Settgins)
-		class USceneComponent* RootComp;
+	FORCEINLINE EWeaponState GetWeaponState() { return mState; }
+	FORCEINLINE void SetWeaponState(EWeaponState state) { mState = state; }
 
-	UPROPERTY(VisibleAnywhere, Category = Settgins)
-		class UStaticMeshComponent* meshComp;
-
-	/*
-	UPROPRTY()
-	class TSubclassOf<>
-	*/
-
-
-	UFUNCTION();
-	virtual void Fire();
-
-	UFUNCTION();
-	virtual void Reload();
-
+	FORCEINLINE FTimerHandle GetFireTimerHandle() { return FireTimerHandle; }
 	
 
 };
