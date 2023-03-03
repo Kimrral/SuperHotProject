@@ -20,7 +20,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(VisibleAnywhere, Category = "VRCamera")
+	UPROPERTY(BlueprintReadOnly, Category = "VRCamera")
 	class UCameraComponent* VRCamera;
 
 public:	
@@ -51,7 +51,19 @@ public:
 		float XMovement;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		float YMovement;
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+		class USoundBase* pistolPickup;
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UUserWidget> crosshairFactory;
+	UPROPERTY(BlueprintReadOnly)
+		class UUserWidget* crosshairUI;
+	UFUNCTION(BlueprintCallable)
+		bool IsMoving();
+	UPROPERTY(EditDefaultsOnly)
+		float TimeDilation;
+	UPROPERTY(EditDefaultsOnly)
+		float Alpha;
+	
 
 
 };
