@@ -19,8 +19,10 @@ APlayerCharacter::APlayerCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	VRCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("VRCamera"));
-	VRCamera->SetupAttachment(RootComponent);
+	VRCamera->SetupAttachment(GetMesh(), TEXT("FPSCamera"));
 	VRCamera->bUsePawnControlRotation = true;
+	VRCamera->SetFieldOfView(60.0f);
+	
 }
 
 // Called when the game starts or when spawned
