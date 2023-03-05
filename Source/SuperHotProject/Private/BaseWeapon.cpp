@@ -4,6 +4,8 @@
 #include "BaseWeapon.h"
 #include "Components/BoxComponent.h"
 #include "TimerManager.h"
+#include "NiagaraFunctionLibrary.h"
+
 
 // Sets default values
 ABaseWeapon::ABaseWeapon()
@@ -44,6 +46,15 @@ void ABaseWeapon::Tick(float DeltaTime)
 void ABaseWeapon::DoFire()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Fire"));
+	FTransform firePosition = MeshComp->GetSocketTransform(TEXT("Muzzle"));
+
+	FRotator smokeRot = MeshComp->GetSocketRotation(TEXT("Smoke"));
+	FVector smokeLoc = MeshComp->GetSocketLocation(TEXT("Smoke"));
+	GetWorld()->SpawnActor<AActor>(bulletFactory, firePosition);
+
+	if (NA_SmokeRing) {
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NA_SmokeRing, smokeLoc, smokeRot);
+	}
 }
 
 void ABaseWeapon::FirePressed()
