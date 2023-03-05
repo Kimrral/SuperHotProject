@@ -9,12 +9,26 @@ AEnemy::AEnemy()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Manny.SKM_Manny'"));
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Manny_Test.SKM_Manny_Test'"));
 
 	if (tempMesh.Succeeded()) {
 		GetMesh()->SetSkeletalMesh(tempMesh.Object);
 		GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -88), FRotator(0, -90, 0));
 	}
+
+	ConstructorHelpers::FObjectFinder<UMaterialInstance> tempMat01(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Characters/Mannequins/Materials/Instances/Manny/MI_Manny_01_Inst.MI_Manny_01_Inst'"));
+
+	if (tempMat01.Succeeded()) {
+		GetMesh()->SetMaterial(0, tempMat01.Object);
+	}
+
+	ConstructorHelpers::FObjectFinder<UMaterialInstance> tempMat02(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Characters/Mannequins/Materials/Instances/Manny/MI_Manny_02_Inst.MI_Manny_02_Inst'"));
+
+	if (tempMat02.Succeeded()) {
+		GetMesh()->SetMaterial(1, tempMat02.Object);
+	}
+
+	//GetMesh()->SetMaterial(0,)
 
 }
 
