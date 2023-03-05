@@ -2,6 +2,7 @@
 
 
 #include "Enemy.h"
+#include "EnemyFSM.h"
 
 // Sets default values
 AEnemy::AEnemy()
@@ -28,6 +29,8 @@ AEnemy::AEnemy()
 	if (tempMat02.Succeeded()) {
 		GetMesh()->SetMaterial(1, tempMat02.Object);
 	}
+
+	fsm = CreateDefaultSubobject<UEnemyFSM>(TEXT("FSM"));
 
 }
 
