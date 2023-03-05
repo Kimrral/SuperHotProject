@@ -27,6 +27,10 @@
 				"Android",
 				"HoloLens"
 			]
+		},
+		{
+			"Name": "ApexDestruction",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
