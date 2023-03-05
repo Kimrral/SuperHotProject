@@ -57,6 +57,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void FireRelease();
 
+	UPROPERTY(EditDefaultsOnly, Category = Bullet)
+		TSubclassOf<class AActor> bulletFactory;
+
 	
 	FORCEINLINE float GetFireRate() { return FireRate; }
 	FORCEINLINE void SetFireRate(float rate) { FireRate = rate <= 0 ? 0.5 : rate; }
@@ -66,5 +69,8 @@ public:
 
 	FORCEINLINE FTimerHandle GetFireTimerHandle() { return FireTimerHandle; }
 	
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = Bullet)
+		class UNiagaraSystem* NA_SmokeRing;
 
 };

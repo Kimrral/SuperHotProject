@@ -16,6 +16,19 @@ AEnemy::AEnemy()
 		GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -88), FRotator(0, -90, 0));
 	}
 
+
+	ConstructorHelpers::FObjectFinder<UMaterialInstance> tempMat01(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Characters/Mannequins/Materials/Instances/Manny/MI_Manny_01_Inst.MI_Manny_01_Inst'"));
+
+	if (tempMat01.Succeeded()) {
+		GetMesh()->SetMaterial(0, tempMat01.Object);
+	}
+
+	ConstructorHelpers::FObjectFinder<UMaterialInstance> tempMat02(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Characters/Mannequins/Materials/Instances/Manny/MI_Manny_02_Inst.MI_Manny_02_Inst'"));
+
+	if (tempMat02.Succeeded()) {
+		GetMesh()->SetMaterial(1, tempMat02.Object);
+	}
+
 }
 
 // Called when the game starts or when spawned
