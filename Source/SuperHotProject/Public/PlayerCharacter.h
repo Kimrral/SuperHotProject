@@ -30,6 +30,21 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	// 회전처리 함수
+	void Turn(const FInputActionValue& Values);
+	// 이동처리 함수
+	void Move(const FInputActionValue& Values);
+	void MoveReleased();
+	void Jump();
+	void JumpEnd();
+	void Fire();
+	void Throw();
+	void Unequip();
+	UFUNCTION(BlueprintCallable)
+	bool IsMoving();
+	UFUNCTION(BlueprintImplementableEvent)
+	void ResetFireCooldown();
+
 	// 필요속성 : 이동속도, 입력액션, 입력매핑컨텍스트
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 		float moveSpeed = 500.0f;
@@ -42,28 +57,49 @@ public:
 	// 마우스 입력처리
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 		class UInputAction* IA_Look;
-	// 회전처리 함수
-	void Turn(const FInputActionValue& Values);
-	// 이동처리 함수
-	void Move(const FInputActionValue& Values);
-	void MoveReleased();
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+		class UInputAction* IA_Jump;
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+		class UInputAction* IA_Fire;
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+		class UInputAction* IA_Throw;
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+		class UInputAction* IA_Unequip;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		float XMovement;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		float YMovement;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		class USoundBase* pistolPickup;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		TSubclassOf<class UUserWidget> crosshairFactory;
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		TSubclassOf<class AActor> BPProjectile;
 	UPROPERTY(BlueprintReadOnly)
 		class UUserWidget* crosshairUI;
-	UFUNCTION(BlueprintCallable)
-		bool IsMoving();
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		float TimeDilation;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		float Alpha;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float TimeBetweenShots = 0.4f;
+
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+		bool isWeaponEquipped = false;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+		bool bCanFire = true;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+		bool isMontagePlaying;
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+	class UAnimMontage* punchMontage;
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+	class USoundBase* pistol_fire;
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+	class USoundBase* pistol_pickup;
+
 	
+
 
 
 };

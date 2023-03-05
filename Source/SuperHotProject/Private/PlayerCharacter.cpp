@@ -48,6 +48,8 @@ void APlayerCharacter::BeginPlay()
 
 	
 
+	
+
 }
 
 // Called every frame
@@ -84,6 +86,11 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		InputSystem->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 		InputSystem->BindAction(IA_Move, ETriggerEvent::Completed, this, &APlayerCharacter::MoveReleased);
 		InputSystem->BindAction(IA_Look, ETriggerEvent::Triggered, this, &APlayerCharacter::Turn);
+		InputSystem->BindAction(IA_Jump, ETriggerEvent::Triggered, this, &APlayerCharacter::Jump);
+		InputSystem->BindAction(IA_Jump, ETriggerEvent::Completed, this, &APlayerCharacter::JumpEnd);
+		InputSystem->BindAction(IA_Fire, ETriggerEvent::Triggered, this, &APlayerCharacter::Fire);
+		InputSystem->BindAction(IA_Unequip, ETriggerEvent::Triggered, this, &APlayerCharacter::Unequip);
+		InputSystem->BindAction(IA_Throw, ETriggerEvent::Triggered, this, &APlayerCharacter::Throw);
 	}
 
 	
@@ -140,4 +147,97 @@ bool APlayerCharacter::IsMoving()
 
 }
 
+void APlayerCharacter::Jump()
+{
+	ACharacter::Jump();
+}
 
+void APlayerCharacter::JumpEnd()
+{
+	ACharacter::StopJumping();
+}
+
+void APlayerCharacter::Fire()
+{
+	FVector fireLoc = GetMesh()->GetSocketLocation(TEXT("FireSocket"));
+	FRotator fireRot = VRCamera->GetComponentRotation();
+	FTransform fireTrans = UKismetMathLibrary::MakeTransform(fireLoc, fireRot);
+	if (isWeaponEquipped)
+	{
+		if (bCanFire)
+		{
+			ACharacter::PlayAnimMontage(punchMontage, 1.0f, TEXT("Fire"));
+			UGameplayStatics::PlaySound2D(GetWorld(), pistol_fire, 1, 1, 0, nullptr, nullptr, false);
+
+			GetWorld()->SpawnActor<AActor>(BPProjectile, fireTrans);
+			bCanFire = false;
+			ResetFireCooldown();
+		}
+	}
+	else
+	{
+		auto anim = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+		isMontagePlaying = anim->IsAnyMontagePlaying();
+		if (isMontagePlaying == false)
+		{
+			if (bCanFire)
+			{				
+				ACharacter::PlayAnimMontage(punchMontage, 1, TEXT("ElbowPunch"));
+			}
+		}
+		
+	}
+
+
+
+
+
+
+}
+
+void APlayerCharacter::Unequip()
+{
+	if (isWeaponEquipped)
+	{
+		isWeaponEquipped = false;
+	}
+	else 
+	{
+		isWeaponEquipped = true;
+	}
+
+
+}
+
+void APlayerCharacter::Throw()
+{
+	auto anim = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+	isMontagePlaying = anim->IsAnyMontagePlaying();
+	if (isMontagePlaying == false)
+	{
+		ACharacter::PlayAnimMontage(punchMontage, 1.0f, TEXT("Throw"));
+	}
+}
+
+
+/*void APlayerCharacter::ResetFireCooldown()
+{
+	FTimerHandle WaitHandle;
+	float WaitTime = TimeBetweenShots; //시간을 설정하고
+	GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
+		{
+
+			// 여기에 코드를 치면 된다.
+			UGameplayStatics::PlaySound2D(GetWorld(), pistol_pickup, 1, 1, 0, false);
+
+		}), WaitTime, false);
+	FTimerHandle WaitHandle1;
+	float WaitTime1 = 0.1f;
+	GetWorld()->GetTimerManager().SetTimer(WaitHandle1, FTimerDelegate::CreateLambda([&]()
+		{
+			bCanFire = true;
+
+		}), WaitTime1, false);
+
+
+}*/
