@@ -7,6 +7,8 @@
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "PlayerWeapon_Pistol.h"
+#include "BaseWeapon.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
@@ -45,32 +47,33 @@ void APlayerCharacter::BeginPlay()
 	
 	crosshairUI = CreateWidget<UUserWidget>(GetWorld(), crosshairFactory);
 	crosshairUI->AddToViewport();
-
 	
-
-	
-
 }
 
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	TimeDilation = UKismetMathLibrary::SelectFloat(1.0, 0.04, IsMoving());
-	Alpha = UKismetMathLibrary::SelectFloat(0.03, 0.5, IsMoving());
-	auto lerp = UKismetMathLibrary::Lerp(UGameplayStatics::GetGlobalTimeDilation(GetWorld()), TimeDilation, Alpha);
-	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), lerp);
-	if (IsMoving() == true)
+	if (bTestTime == true)
 	{
-		UGameplayStatics::SetGlobalPitchModulation(GetWorld(), 1.0f, 0.3f);
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0);
 	}
 	else
 	{
-		UGameplayStatics::SetGlobalPitchModulation(GetWorld(), 0.00001f, 0.3f);
+		TimeDilation = UKismetMathLibrary::SelectFloat(1.0, 0.04, IsMoving());
+		Alpha = UKismetMathLibrary::SelectFloat(0.03, 0.5, IsMoving());
+		auto lerp = UKismetMathLibrary::Lerp(UGameplayStatics::GetGlobalTimeDilation(GetWorld()), TimeDilation, Alpha);
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), lerp);
+		if (IsMoving() == true)
+		{
+			UGameplayStatics::SetGlobalPitchModulation(GetWorld(), 1.0f, 0.3f);
+		}
+		else
+		{
+			UGameplayStatics::SetGlobalPitchModulation(GetWorld(), 0.00001f, 0.3f);
+		}
+
 	}
-
-
 
 }
 
@@ -215,10 +218,21 @@ void APlayerCharacter::Throw()
 	isMontagePlaying = anim->IsAnyMontagePlaying();
 	if (isMontagePlaying == false)
 	{
+		
 		ACharacter::PlayAnimMontage(punchMontage, 1.0f, TEXT("Throw"));
+		//DetachWeapon();
+
+
 	}
 }
 
+void APlayerCharacter::DetachWeapon()
+{
+	
+	//auto scene = Cast<USceneComponent>(GetMesh());
+	//scene->USceneComponent::K2_DetachFromComponent(EDetachmentRule::KeepRelative, EDetachmentRule::KeepRelative, EDetachmentRule::KeepRelative, true);
+	//isWeaponEquipped = false;
+}
 
 /*void APlayerCharacter::ResetFireCooldown()
 {
@@ -228,7 +242,7 @@ void APlayerCharacter::Throw()
 		{
 
 			// 여기에 코드를 치면 된다.
-			UGameplayStatics::PlaySound2D(GetWorld(), pistol_pickup, 1, 1, 0, false);
+			UGameplayStatics::PlaySound2D(GetWorld(), pistol_pickup, 1, 1, 0, nullptr, nullptr, false);
 
 		}), WaitTime, false);
 	FTimerHandle WaitHandle1;
