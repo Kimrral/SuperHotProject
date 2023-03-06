@@ -4,7 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "GeometryCollection/GeometryCollectionComponent.h"
+#include "Components/PrimitiveComponent.h"
 #include "Enemy.generated.h"
+
+UENUM(BlueprintType)
+enum class EEnemyWeapon : uint8 {
+	Idle,
+	Fist,
+	Gun,
+};
+
 
 UCLASS()
 class SUPERHOTPROJECT_API AEnemy : public ACharacter
@@ -26,7 +36,20 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = FSMComponent)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = FSM)
+		EEnemyWeapon mState = EEnemyWeapon::Gun;
+
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = FSMComponent)
 		class UEnemyFSM* fsm;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = FSMComponent)
+		class UGeometryCollectionComponent* geoComp;
+
+	FORCEINLINE EEnemyWeapon GetEnemyWeapon() { return mState; }
+	FORCEINLINE void SetEnemyWeapon(EEnemyWeapon state) { mState = state; }
+
+	UFUNCTION()
+		void OnDieAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 };

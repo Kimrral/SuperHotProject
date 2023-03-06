@@ -6,6 +6,7 @@
 #include "Enemy.h"
 #include "Kismet/GameplayStatics.h"
 
+
 // Sets default values for this component's properties
 UEnemyFSM::UEnemyFSM()
 {
@@ -30,7 +31,6 @@ void UEnemyFSM::BeginPlay()
 	me = Cast<AEnemy>(GetOwner());
 
 
-
 }
 
 
@@ -48,8 +48,11 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 		case EEnemyState::Move:
 			MoveState();
 			break;
-		case EEnemyState::Attack:
-			AttackState();
+		case EEnemyState::FistAttack:
+			FistAttackState();
+			break;
+		case EEnemyState::GunAttack:
+			GunAttackState();
 			break;
 		case EEnemyState::Die:
 			DieState();
@@ -71,26 +74,64 @@ void UEnemyFSM::IdleState()
 
 void UEnemyFSM::MoveState()
 {
+	if (bTestMove) {
+		return;
+	}
 	FVector destination = target->GetActorLocation();
 	FVector dir = destination - me->GetActorLocation();
 	me->AddMovementInput(dir.GetSafeNormal());
 
-	if (!bHasGun) {
+	// 나중에 리팩토링 해야함 Enemy 클래스에 무기 Enum State 클래스 존재
+	if (me->GetEnemyWeapon() == EEnemyWeapon::Fist) {
 		if (dir.Size() < attackRange) {
-			mState = EEnemyState::Attack;
+			mState = EEnemyState::FistAttack;
 		}
 	}
-	else {
-
+	else if(me->GetEnemyWeapon() == EEnemyWeapon::Gun){
+		if (dir.Size() < shotRange) {
+			mState = EEnemyState::GunAttack;
+		}
 	}
 
 }
 
-void UEnemyFSM::AttackState()
+void UEnemyFSM::FistAttackState()
 {
+	currentTime += GetWorld()->DeltaTimeSeconds;
+	if (currentTime > attackDelayTime) {
+		UE_LOG(LogTemp, Warning, TEXT("FistAttack"));
+		currentTime = 0;
+	}
+
+	float distance = FVector::Distance(target->GetActorLocation(), me->GetActorLocation());
+
+	if (distance > attackRange) {
+		mState = EEnemyState::Move;
+	}
+}
+
+void UEnemyFSM::GunAttackState()
+{
+	currentTime += GetWorld()->DeltaTimeSeconds;
+	if (currentTime > attackDelayTime) {
+		UE_LOG(LogTemp, Warning, TEXT("Fire"));
+		currentTime = 0;
+	}
+
+	float distance = FVector::Distance(target->GetActorLocation(), me->GetActorLocation());
+
+	if (distance > shotRange) {
+		mState = EEnemyState::Move;
+	}
 }
 
 void UEnemyFSM::DieState()
 {
+
+}
+
+void UEnemyFSM::OnDamage()
+{
+	mState = EEnemyState::Die;
 }
 

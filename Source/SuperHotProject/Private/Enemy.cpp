@@ -3,6 +3,9 @@
 
 #include "Enemy.h"
 #include "EnemyFSM.h"
+#include "Components/CapsuleComponent.h"
+
+
 
 // Sets default values
 AEnemy::AEnemy()
@@ -32,12 +35,26 @@ AEnemy::AEnemy()
 
 	fsm = CreateDefaultSubobject<UEnemyFSM>(TEXT("FSM"));
 
+	geoComp = CreateDefaultSubobject<UGeometryCollectionComponent>(TEXT("GeoComp"));
+
+	geoComp->SetupAttachment(RootComponent);
+	geoComp->SetRelativeLocationAndRotation(FVector(0, 0, -90), FRotator(0, -90, 0));
 }
 
 // Called when the game starts or when spawned
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SetEnemyWeapon(mState);
+
+
+
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnDieAction);
+
+
+	geoComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	geoComp->SetVisibility(false);
 	
 }
 
@@ -53,5 +70,20 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void AEnemy::OnDieAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	
+	if (OtherActor->GetName().Contains(TEXT("BP_Projectile"))) {
+		GetMesh()->SetVisibility(false);
+		geoComp->SetVisibility(true);
+		geoComp->AddImpulse(FVector(0, 0, 100000));
+		OtherActor->Destroy();
+		UE_LOG(LogTemp, Warning, TEXT("bullet"));
+	}
+
+	
+	
 }
 
