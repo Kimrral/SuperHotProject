@@ -80,6 +80,7 @@ void UEnemyFSM::MoveState()
 	FVector destination = target->GetActorLocation();
 	FVector dir = destination - me->GetActorLocation();
 	me->AddMovementInput(dir.GetSafeNormal());
+	UE_LOG(LogTemp, Warning, TEXT("Run"));
 
 	// 나중에 리팩토링 해야함 Enemy 클래스에 무기 Enum State 클래스 존재
 	if (me->GetEnemyWeapon() == EEnemyWeapon::Fist) {
@@ -115,6 +116,7 @@ void UEnemyFSM::GunAttackState()
 	currentTime += GetWorld()->DeltaTimeSeconds;
 	if (currentTime > attackDelayTime) {
 		UE_LOG(LogTemp, Warning, TEXT("Fire"));
+		me->GunFire();
 		currentTime = 0;
 	}
 

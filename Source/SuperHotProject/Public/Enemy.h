@@ -46,6 +46,17 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = FSMComponent)
 		class UGeometryCollectionComponent* geoComp;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
+		class USkeletalMeshComponent* gunMeshComp;
+
+	UPROPERTY(EditDefaultsOnly, Category = Settings)
+		TSubclassOf<class AActor> bulletFactory;
+
+
+	UFUNCTION()
+		void GunFire();
+	
+
 	FORCEINLINE EEnemyWeapon GetEnemyWeapon() { return mState; }
 	FORCEINLINE void SetEnemyWeapon(EEnemyWeapon state) { mState = state; }
 
