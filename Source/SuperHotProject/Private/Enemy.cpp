@@ -3,12 +3,18 @@
 
 #include "Enemy.h"
 #include "EnemyFSM.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+
 
 // Sets default values
 AEnemy::AEnemy()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCharacterMovement()->bOrientRotationToMovement = true;
 
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Manny.SKM_Manny'"));
 
@@ -32,12 +38,30 @@ AEnemy::AEnemy()
 
 	fsm = CreateDefaultSubobject<UEnemyFSM>(TEXT("FSM"));
 
+	geoComp = CreateDefaultSubobject<UGeometryCollectionComponent>(TEXT("GeoComp"));
+
+	geoComp->SetupAttachment(RootComponent);
+	geoComp->SetRelativeLocationAndRotation(FVector(0, 0, -90), FRotator(0, -90, 0));
+
+
+	gunMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMeshComp"));
+	gunMeshComp->SetupAttachment(GetMesh());
+
 }
 
 // Called when the game starts or when spawned
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SetEnemyWeapon(mState);
+
+
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnDieAction);
+
+	//geoComp->SetActive(false);
+	//geoComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//geoComp->SetVisibility(false);
 	
 }
 
@@ -53,5 +77,30 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void AEnemy::GunFire()
+{
+	FTransform firePosition = gunMeshComp->GetSocketTransform(TEXT("Muzzle"));
+
+	GetWorld()->SpawnActor<AActor>(bulletFactory, firePosition);
+
+}
+
+void AEnemy::OnDieAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	
+	if (OtherActor->GetName().Contains(TEXT("BP_Projectile"))) {
+
+		GetMesh()->SetVisibility(false);
+		geoComp->SetVisibility(true);
+		//geoComp->SetActive(true);
+		geoComp->AddImpulse(FVector(100,100,100));
+		OtherActor->Destroy();
+		UE_LOG(LogTemp, Warning, TEXT("bullet"));
+	}
+
+	
+	
 }
 

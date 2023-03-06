@@ -11,7 +11,8 @@ UENUM(BlueprintType)
 enum class EEnemyState : uint8 {
 	Idle,
 	Move,
-	Attack,
+	FistAttack,
+	GunAttack,
 	Die,
 };
 
@@ -40,7 +41,8 @@ public:
 
 	void IdleState();
 	void MoveState();
-	void AttackState();
+	void FistAttackState();
+	void GunAttackState();
 	void DieState();
 
 
@@ -61,5 +63,16 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = FSM)
 		float attackRange = 150.0f;
 
+	UPROPERTY(EditDefaultsOnly, Category = FSM)
+		float shotRange = 600.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = FSM)
+		float attackDelayTime = 2.0f;
+
+	UFUNCTION(BlueprintCallable)
+	void OnDamage();
+
+	UPROPERTY(EditDefaultsOnly, Category = FSM)
+	bool bTestMove = false;
 
 };
