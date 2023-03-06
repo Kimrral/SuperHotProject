@@ -15,5 +15,7 @@ void UPlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 	if (player != nullptr)
 	{
 		isWeaponEquipped = player->isWeaponEquipped;
+		//auto Pitch = player->GetBaseAimRotation();
+
 	}
 }

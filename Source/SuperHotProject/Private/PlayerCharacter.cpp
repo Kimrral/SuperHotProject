@@ -171,7 +171,7 @@ void APlayerCharacter::Fire()
 		{
 			ACharacter::PlayAnimMontage(punchMontage, 1.0f, TEXT("Fire"));
 			UGameplayStatics::PlaySound2D(GetWorld(), pistol_fire, 1, 1, 0, nullptr, nullptr, false);
-
+			//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), fireSmokeFactory, fireTrans);
 			GetWorld()->SpawnActor<AActor>(BPProjectile, fireTrans);
 			bCanFire = false;
 			ResetFireCooldown();
@@ -184,7 +184,8 @@ void APlayerCharacter::Fire()
 		if (isMontagePlaying == false)
 		{
 			if (bCanFire)
-			{				
+			{
+				//int32 randInt = FMath::RandRange(1, 3);
 				ACharacter::PlayAnimMontage(punchMontage, 1, TEXT("ElbowPunch"));
 			}
 		}

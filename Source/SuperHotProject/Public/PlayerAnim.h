@@ -20,5 +20,7 @@ class SUPERHOTPROJECT_API UPlayerAnim : public UAnimInstance
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = PlayerAnim)
 		bool isWeaponEquipped;
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = PlayerAnim)
+	//	float Pitch;
 	
 };
