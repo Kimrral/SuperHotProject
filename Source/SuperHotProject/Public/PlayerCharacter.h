@@ -44,6 +44,8 @@ public:
 	bool IsMoving();
 	UFUNCTION(BlueprintImplementableEvent)
 	void ResetFireCooldown();
+	UFUNCTION()
+		void DetachWeapon();
 
 	// 필요속성 : 이동속도, 입력액션, 입력매핑컨텍스트
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
@@ -74,7 +76,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		TSubclassOf<class UUserWidget> crosshairFactory;
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
-		TSubclassOf<class AActor> BPProjectile;
+		TSubclassOf<class AActor> BPProjectile;	
 	UPROPERTY(BlueprintReadOnly)
 		class UUserWidget* crosshairUI;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
@@ -83,9 +85,9 @@ public:
 		float Alpha;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	float TimeBetweenShots = 0.4f;
-
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+		bool bTestTime = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool isWeaponEquipped = false;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		bool bCanFire = true;
