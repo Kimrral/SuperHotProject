@@ -45,7 +45,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void ResetFireCooldown();
 	UFUNCTION()
-		void DetachWeapon();
+	void DetachWeapon();
 
 	// 필요속성 : 이동속도, 입력액션, 입력매핑컨텍스트
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
@@ -99,6 +99,8 @@ public:
 	class USoundBase* pistol_fire;
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 	class USoundBase* pistol_pickup;
+	UPROPERTY(EditAnywhere)
+		class UParticleSystem* fireSmokeFactory;
 
 	
 
