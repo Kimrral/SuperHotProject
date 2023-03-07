@@ -179,14 +179,26 @@ void APlayerCharacter::Fire()
 	}
 	else
 	{
+		/*FHitResult HitInfo;
+		FCollisionQueryParams params;
+		params.AddIgnoredActor(this);
+		bool bHit = GetWorld()->LineTraceSingleByChannel(HitInfo, VRCamera->GetComponentLocation(), VRCamera->GetComponentLocation()+VRCamera->GetForwardVector()*1000,ECollisionChannel::ECC_Visibility, params);
+		
+		if (bHit&&HitInfo.GetActor()->GetName().Contains(TEXT("BP_PlayerWeapon_Pistol")))
+		{
+			auto pistol = Cast<APlayerWeapon_Pistol>(StaticClass(GetWorld()));
+			pistol->OnOverlap();
+		}*/
 		auto anim = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
 		isMontagePlaying = anim->IsAnyMontagePlaying();
 		if (isMontagePlaying == false)
 		{
 			if (bCanFire)
 			{
-				//int32 randInt = FMath::RandRange(1, 3);
-				ACharacter::PlayAnimMontage(punchMontage, 1, TEXT("ElbowPunch"));
+				int32 randInt = FMath::RandRange(1, 3);
+				FString montNum = FString::FromInt(randInt);
+				FName montName = FName(*montNum);
+				ACharacter::PlayAnimMontage(punchMontage, 1, montName);
 			}
 		}
 		
