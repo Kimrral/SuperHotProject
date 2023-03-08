@@ -44,6 +44,8 @@ public:
 	bool IsMoving();
 	UFUNCTION(BlueprintImplementableEvent)
 	void ResetFireCooldown();
+	UFUNCTION(BlueprintImplementableEvent)
+		void DetachPistol();
 	UFUNCTION()
 	void DetachWeapon();
 
@@ -101,6 +103,7 @@ public:
 	class USoundBase* pistol_pickup;
 	UPROPERTY(EditAnywhere)
 		class UParticleSystem* fireSmokeFactory;
+	class APlayerWeapon_Pistol* Pistol;
 
 	
 
