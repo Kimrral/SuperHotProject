@@ -129,7 +129,8 @@ void UEnemyFSM::GunAttackState()
 
 void UEnemyFSM::DieState()
 {
-
+	//me->Destroy();
+	//me->GetMesh()->SetSimulatePhysics(true);
 }
 
 void UEnemyFSM::OnDamage()

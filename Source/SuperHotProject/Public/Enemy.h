@@ -4,8 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "GeometryCollection/GeometryCollectionComponent.h"
-#include "Components/PrimitiveComponent.h"
 #include "Enemy.generated.h"
 
 UENUM(BlueprintType)
@@ -37,14 +35,27 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = FSM)
-		EEnemyWeapon mState = EEnemyWeapon::Gun;
+		EEnemyWeapon mState = EEnemyWeapon::Idle;
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = FSMComponent)
 		class UEnemyFSM* fsm;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = FSMComponent)
-		class UGeometryCollectionComponent* geoComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
+		class USkeletalMeshComponent* LeftArm;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
+		class USkeletalMeshComponent* RightArm;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
+		class USkeletalMeshComponent* Body;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
+		class USkeletalMeshComponent* LeftLeg;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
+		class USkeletalMeshComponent* RightLeg;
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
 		class USkeletalMeshComponent* gunMeshComp;
@@ -54,8 +65,7 @@ public:
 
 
 	UFUNCTION()
-		void GunFire();
-	
+		void GunFire();	
 
 	FORCEINLINE EEnemyWeapon GetEnemyWeapon() { return mState; }
 	FORCEINLINE void SetEnemyWeapon(EEnemyWeapon state) { mState = state; }
