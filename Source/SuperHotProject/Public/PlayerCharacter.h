@@ -48,6 +48,8 @@ public:
 		void DetachPistol();
 	UFUNCTION()
 	void DetachWeapon();
+	UFUNCTION()
+		void Attach();
 
 	// 필요속성 : 이동속도, 입력액션, 입력매핑컨텍스트
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
@@ -69,6 +71,8 @@ public:
 		class UInputAction* IA_Throw;
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 		class UInputAction* IA_Unequip;
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+		class UInputAction* IA_Attach;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		float XMovement;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
@@ -103,10 +107,12 @@ public:
 	class USoundBase* pistol_pickup;
 	UPROPERTY(EditAnywhere)
 		class UParticleSystem* fireSmokeFactory;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class APlayerWeapon_Pistol* Pistol;
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		TSubclassOf<class APlayerWeapon_Pistol> pistolFactory;
 
 	
-
 
 
 };

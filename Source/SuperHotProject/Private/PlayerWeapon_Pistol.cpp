@@ -55,3 +55,12 @@ void APlayerWeapon_Pistol::Tick(float DeltaTime)
 
 }*/
 
+
+
+void APlayerWeapon_Pistol::PickUpC()
+{
+	BoxComp->UPrimitiveComponent::SetAllPhysicsLinearVelocity(FVector::ZeroVector, false);
+	BoxComp->UPrimitiveComponent::SetSimulatePhysics(false);
+	BoxComp->UPrimitiveComponent::SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+

@@ -39,4 +39,7 @@ public:
 
 	//UFUNCTION()
 		//void DetachWeapon();
+
+	UFUNCTION()
+	void PickUpC();
 };

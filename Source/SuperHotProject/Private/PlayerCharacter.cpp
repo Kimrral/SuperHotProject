@@ -48,7 +48,7 @@ void APlayerCharacter::BeginPlay()
 	crosshairUI = CreateWidget<UUserWidget>(GetWorld(), crosshairFactory);
 	crosshairUI->AddToViewport();
 	
-	//Pistol = GetWorld()->SpawnActor<APlayerWeapon_Pistol>(StaticClass());
+	//Pistol = GetWorld()->SpawnActor<APlayerWeapon_Pistol>(pistolFactory, GetMesh()->GetComponentLocation(), GetMesh()->GetComponentRotation());
 
 }
 
@@ -96,6 +96,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		InputSystem->BindAction(IA_Fire, ETriggerEvent::Triggered, this, &APlayerCharacter::Fire);
 		InputSystem->BindAction(IA_Unequip, ETriggerEvent::Triggered, this, &APlayerCharacter::Unequip);
 		InputSystem->BindAction(IA_Throw, ETriggerEvent::Triggered, this, &APlayerCharacter::Throw);
+		InputSystem->BindAction(IA_Attach, ETriggerEvent::Triggered, this, &APlayerCharacter::Attach);
+
 	}
 
 	
@@ -289,3 +291,31 @@ void APlayerCharacter::DetachWeapon()
 
 
 }*/
+
+void APlayerCharacter::Attach()
+{
+	return;
+	if (isWeaponEquipped == false)
+	{
+		FHitResult HitInfo;
+		FVector StartPos = VRCamera->GetComponentLocation();
+		FVector EndPos = StartPos+VRCamera->GetForwardVector()*1500;
+		FCollisionQueryParams params;
+		params.AddIgnoredActor(this);
+		GetWorld()->LineTraceSingleByChannel(HitInfo, StartPos, EndPos, ECollisionChannel::ECC_Visibility, params);
+		auto PistolRef = Cast<APlayerWeapon_Pistol>(HitInfo.GetActor());
+		auto WeaponStartTrans = PistolRef->GetActorTransform();
+		float alpha = 1.0f;
+		auto newtrans = UKismetMathLibrary::TLerp(WeaponStartTrans, VRCamera->USceneComponent::K2_GetComponentToWorld(), alpha, ELerpInterpolationMode::QuatInterp);
+		PistolRef->SetActorTransform(newtrans, false, nullptr, ETeleportType::None);
+		auto pistolroot = PistolRef->GetRootComponent();
+		pistolroot->USceneComponent::K2_AttachToComponent(GetMesh(), TEXT("Weapon_R"), EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, true);
+		PistolRef->PickUpC();
+		isWeaponEquipped = true;
+		UGameplayStatics::PlaySound2D(GetWorld(), pistol_pickup, 1, 1, 0, nullptr, nullptr, false);
+	}
+
+
+
+
+}
