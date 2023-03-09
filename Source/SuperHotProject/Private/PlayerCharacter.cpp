@@ -181,15 +181,16 @@ void APlayerCharacter::Fire()
 	}
 	else
 	{
+		
 		/*FHitResult HitInfo;
 		FCollisionQueryParams params;
 		params.AddIgnoredActor(this);
-		bool bHit = GetWorld()->LineTraceSingleByChannel(HitInfo, VRCamera->GetComponentLocation(), VRCamera->GetComponentLocation()+VRCamera->GetForwardVector()*500,ECollisionChannel::ECC_Visibility, params);
+		bool bHit = GetWorld()->LineTraceSingleByChannel(HitInfo, VRCamera->GetComponentLocation(), VRCamera->GetComponentLocation()+VRCamera->GetForwardVector()*1500,ECollisionChannel::ECC_Visibility, params);
 		DrawDebugLine(GetWorld(), VRCamera->GetComponentLocation(), VRCamera->GetComponentLocation() + VRCamera->GetForwardVector() * 500, FColor::Red);
 		if (bHit&&HitInfo.GetActor()->GetName().Contains(TEXT("BP_PlayerWeapon_Pistol")))
 		{
 			auto pistol = Cast<APlayerWeapon_Pistol>(HitInfo.GetActor());
-			pistol->SetActorLocation(this->GetActorLocation());
+			pistol->SetActorLocation(this->GetActorLocation()); 
 		}*/
 		auto anim = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
 		isMontagePlaying = anim->IsAnyMontagePlaying();
