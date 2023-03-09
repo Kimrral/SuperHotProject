@@ -28,11 +28,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere, Category = Settgins)
+	UPROPERTY(EditAnywhere, Category = Settings)
 		class USkeletalMeshComponent* pistolComp;
 
-	UFUNCTION()
-		void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+		class UBoxComponent* traceCheckBox;
+
+	//UFUNCTION()
+		//void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	//UFUNCTION()
 		//void DetachWeapon();

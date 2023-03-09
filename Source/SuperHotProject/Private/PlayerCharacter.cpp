@@ -48,6 +48,8 @@ void APlayerCharacter::BeginPlay()
 	crosshairUI = CreateWidget<UUserWidget>(GetWorld(), crosshairFactory);
 	crosshairUI->AddToViewport();
 	
+	//Pistol = GetWorld()->SpawnActor<APlayerWeapon_Pistol>(StaticClass());
+
 }
 
 // Called every frame
@@ -179,14 +181,27 @@ void APlayerCharacter::Fire()
 	}
 	else
 	{
+		
+		/*FHitResult HitInfo;
+		FCollisionQueryParams params;
+		params.AddIgnoredActor(this);
+		bool bHit = GetWorld()->LineTraceSingleByChannel(HitInfo, VRCamera->GetComponentLocation(), VRCamera->GetComponentLocation()+VRCamera->GetForwardVector()*1500,ECollisionChannel::ECC_Visibility, params);
+		DrawDebugLine(GetWorld(), VRCamera->GetComponentLocation(), VRCamera->GetComponentLocation() + VRCamera->GetForwardVector() * 500, FColor::Red);
+		if (bHit&&HitInfo.GetActor()->GetName().Contains(TEXT("BP_PlayerWeapon_Pistol")))
+		{
+			auto pistol = Cast<APlayerWeapon_Pistol>(HitInfo.GetActor());
+			pistol->SetActorLocation(this->GetActorLocation()); 
+		}*/
 		auto anim = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
 		isMontagePlaying = anim->IsAnyMontagePlaying();
 		if (isMontagePlaying == false)
 		{
 			if (bCanFire)
 			{
-				//int32 randInt = FMath::RandRange(1, 3);
-				ACharacter::PlayAnimMontage(punchMontage, 1, TEXT("ElbowPunch"));
+				int32 randInt = FMath::RandRange(1, 3);
+				FString montNum = FString::FromInt(randInt);
+				FName montName = FName(*montNum);
+				ACharacter::PlayAnimMontage(punchMontage, 1, montName);
 			}
 		}
 		
@@ -221,7 +236,8 @@ void APlayerCharacter::Throw()
 	{
 		
 		ACharacter::PlayAnimMontage(punchMontage, 1.0f, TEXT("Throw"));
-		//DetachWeapon();
+		DetachPistol();
+		isWeaponEquipped = false;
 
 
 	}
@@ -229,10 +245,27 @@ void APlayerCharacter::Throw()
 
 void APlayerCharacter::DetachWeapon()
 {
+	/*bool pistolValid = UKismetSystemLibrary::IsValid(Pistol);
+	if (pistolValid)
+	{
+		float ThrowVelocity = 1500.0f;
+		AActor::K2_DetachFromActor(EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld);
+		
+		auto impulse =  (VRCamera->GetForwardVector())* ThrowVelocity;
+		auto prim = Cast<UPrimitiveComponent>(StaticClass());
+		prim->AddImpulseAtLocation(FVector(500, 0, 0), (Pistol->GetWorldLocation()-FVector(0, 10, 0)));
+		prim->AddImpulse(impulse, TEXT("none"), true);
 	
+	
+	
+	}
+
+	*/
 	//auto scene = Cast<USceneComponent>(GetMesh());
 	//scene->USceneComponent::K2_DetachFromComponent(EDetachmentRule::KeepRelative, EDetachmentRule::KeepRelative, EDetachmentRule::KeepRelative, true);
 	//isWeaponEquipped = false;
+
+
 }
 
 /*void APlayerCharacter::ResetFireCooldown()

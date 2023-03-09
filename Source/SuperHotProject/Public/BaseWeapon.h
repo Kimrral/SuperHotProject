@@ -42,7 +42,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 
-	UPROPERTY(EditAnywhere, Category = Settings)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
 		class UBoxComponent* BoxComp;
 
 	UPROPERTY(EditAnywhere, Category = Settgins)
