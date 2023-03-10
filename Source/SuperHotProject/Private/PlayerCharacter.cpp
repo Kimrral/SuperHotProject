@@ -44,9 +44,13 @@ void APlayerCharacter::BeginPlay()
 			subSystem->AddMappingContext(IMC_Default, 0);
 		}
 	}
-	
-	crosshairUI = CreateWidget<UUserWidget>(GetWorld(), crosshairFactory);
-	crosshairUI->AddToViewport();
+		crosshairUI = CreateWidget<UUserWidget>(GetWorld(), crosshairFactory);
+		noAmmoUI = CreateWidget<UUserWidget>(GetWorld(), noAmmoFactory);
+		//if (isEnterUIEnd)
+		//{
+		//	crosshairUI->AddToViewport();
+		//}
+
 	
 	//Pistol = GetWorld()->SpawnActor<APlayerWeapon_Pistol>(pistolFactory, GetMesh()->GetComponentLocation(), GetMesh()->GetComponentRotation());
 
@@ -56,6 +60,9 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	
+
 	if (bTestTime == true)
 	{
 		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0);
@@ -169,16 +176,51 @@ void APlayerCharacter::Fire()
 	FVector fireLoc = GetMesh()->GetSocketLocation(TEXT("FireSocket"));
 	FRotator fireRot = VRCamera->GetComponentRotation();
 	FTransform fireTrans = UKismetMathLibrary::MakeTransform(fireLoc, fireRot);
+
+	// if using weapon
 	if (isWeaponEquipped)
 	{
-		if (bCanFire)
+		// if using shotgun
+		if (isUsingShotgun&&bCanFire&&CurShotgunBullet!=0)
 		{
-			ACharacter::PlayAnimMontage(punchMontage, 1.0f, TEXT("Fire"));
+			CurShotgunBullet -= 1;
 			UGameplayStatics::PlaySound2D(GetWorld(), pistol_fire, 1, 1, 0, nullptr, nullptr, false);
-			//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), fireSmokeFactory, fireTrans);
 			GetWorld()->SpawnActor<AActor>(BPProjectile, fireTrans);
-			bCanFire = false;
 			ResetFireCooldown();
+		}
+		else if (isUsingShotgun&&bCanFire && CurShotgunBullet == 0)
+		{
+			bTestTime = true;
+			UGameplayStatics::PlaySound2D(GetWorld(), pistolPickup, 0.5, 1, 0, nullptr, nullptr, false);
+			UGameplayStatics::PlaySound2D(GetWorld(), OutOfAmmo, 1.5, 1, 0, nullptr, nullptr, true);
+			noAmmoUI->AddToViewport();
+			bTestTime = false;
+		}
+		// if using pistol
+		else
+		{
+			if (bCanFire && CurPistolBullet != 0)
+			{
+				bTestTime = true;
+				CurPistolBullet -= 1;
+				ACharacter::PlayAnimMontage(punchMontage, 1.0f, TEXT("Fire"));
+				UGameplayStatics::PlaySound2D(GetWorld(), pistol_fire, 1, 1, 0, nullptr, nullptr, false);
+				//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), fireSmokeFactory, fireTrans);
+				GetWorld()->SpawnActor<AActor>(BPProjectile, fireTrans);
+				bCanFire = false;
+				ResetFireCooldown();
+				bTestTime = false;
+			}
+			else if (bCanFire && CurPistolBullet == 0)
+			{
+				bTestTime = true;
+				UGameplayStatics::PlaySound2D(GetWorld(), pistolPickup, 0.5, 1, 0, nullptr, nullptr, false);
+				UGameplayStatics::PlaySound2D(GetWorld(), OutOfAmmo, 1.5, 1, 0, nullptr, nullptr, true);
+				noAmmoUI->AddToViewport();
+				bTestTime = false;
+
+
+			}
 		}
 	}
 	else
@@ -294,6 +336,8 @@ void APlayerCharacter::DetachWeapon()
 
 void APlayerCharacter::Attach()
 {
+	CurPistolBullet = MaxPistolBullet;
+	CurShotgunBullet = MaxShotgunBullet;
 	return;
 	if (isWeaponEquipped == false)
 	{

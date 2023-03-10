@@ -80,11 +80,17 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		class USoundBase* pistolPickup;
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		class USoundBase* OutOfAmmo;
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		TSubclassOf<class UUserWidget> crosshairFactory;
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		TSubclassOf<class UUserWidget> noAmmoFactory;
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		TSubclassOf<class AActor> BPProjectile;	
 	UPROPERTY(BlueprintReadOnly)
 		class UUserWidget* crosshairUI;
+	UPROPERTY(BlueprintReadOnly)
+		class UUserWidget* noAmmoUI;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		float TimeDilation;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
@@ -95,8 +101,12 @@ public:
 		bool bTestTime = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool isWeaponEquipped = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool isUsingShotgun = false;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		bool bCanFire = true;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	bool isEnterUIEnd = false;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		bool isMontagePlaying;
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
@@ -111,6 +121,20 @@ public:
 	class APlayerWeapon_Pistol* Pistol;
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		TSubclassOf<class APlayerWeapon_Pistol> pistolFactory;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings)
+		int32 MaxPistolBullet = 5;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings)
+		int32 CurPistolBullet;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings)
+		int32 MaxShotgunBullet = 3;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings)
+		int32 CurShotgunBullet;
+
+
 
 	
 
