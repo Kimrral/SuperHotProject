@@ -5,6 +5,7 @@
 #include "PlayerCharacter.h"
 #include "Enemy.h"
 #include "Kismet/GameplayStatics.h"
+#include "EnemyAnim.h"
 
 
 // Sets default values for this component's properties
@@ -30,6 +31,7 @@ void UEnemyFSM::BeginPlay()
 
 	me = Cast<AEnemy>(GetOwner());
 
+	anim = Cast<UEnemyAnim>(me->GetMesh()->GetAnimInstance());
 
 }
 
@@ -60,6 +62,7 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 		default:
 			break;
 	}
+
 }
 
 void UEnemyFSM::IdleState()
@@ -68,6 +71,7 @@ void UEnemyFSM::IdleState()
 
 	if (currentTime > idleDelayTime) {
 		mState = EEnemyState::Move;
+		anim->animState = EEnemyState::Move;
 		currentTime = 0;
 	}
 }
@@ -80,12 +84,14 @@ void UEnemyFSM::MoveState()
 	FVector destination = target->GetActorLocation();
 	FVector dir = destination - me->GetActorLocation();
 	me->AddMovementInput(dir.GetSafeNormal());
-	UE_LOG(LogTemp, Warning, TEXT("Run"));
 
 	// 나중에 리팩토링 해야함 Enemy 클래스에 무기 Enum State 클래스 존재
 	if (me->GetEnemyWeapon() == EEnemyWeapon::Fist) {
 		if (dir.Size() < attackRange) {
 			mState = EEnemyState::FistAttack;
+			anim->animState = mState;
+			//currentTime = attackDelayTime;
+			currentTime = 0;
 		}
 	}
 	else if(me->GetEnemyWeapon() == EEnemyWeapon::Gun){
@@ -98,16 +104,19 @@ void UEnemyFSM::MoveState()
 
 void UEnemyFSM::FistAttackState()
 {
+	UE_LOG(LogTemp, Warning, TEXT("AttackState"));
 	currentTime += GetWorld()->DeltaTimeSeconds;
 	if (currentTime > attackDelayTime) {
 		UE_LOG(LogTemp, Warning, TEXT("FistAttack"));
 		currentTime = 0;
+		anim->bAttackPlay = true;
 	}
 
 	float distance = FVector::Distance(target->GetActorLocation(), me->GetActorLocation());
 
 	if (distance > attackRange) {
 		mState = EEnemyState::Move;
+		anim->animState = mState;
 	}
 }
 
@@ -115,7 +124,6 @@ void UEnemyFSM::GunAttackState()
 {
 	currentTime += GetWorld()->DeltaTimeSeconds;
 	if (currentTime > attackDelayTime) {
-		UE_LOG(LogTemp, Warning, TEXT("Fire"));
 		me->GunFire();
 		currentTime = 0;
 	}
@@ -131,6 +139,9 @@ void UEnemyFSM::DieState()
 {
 	//me->Destroy();
 	//me->GetMesh()->SetSimulatePhysics(true);
+	UE_LOG(LogTemp, Warning, TEXT("Die!!!!!!!!!"));
+	mState = EEnemyState::Die;
+	anim->animState = mState;
 }
 
 void UEnemyFSM::OnDamage()

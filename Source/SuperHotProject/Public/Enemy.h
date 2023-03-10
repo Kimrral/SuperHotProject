@@ -34,11 +34,11 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = FSM)
-		EEnemyWeapon mState = EEnemyWeapon::Idle;
+	UPROPERTY(EditDefaultsOnly, Category = FSM)
+		EEnemyWeapon wState = EEnemyWeapon::Idle;
 
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = FSMComponent)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = FSMComponent)
 		class UEnemyFSM* fsm;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
@@ -64,11 +64,12 @@ public:
 		TSubclassOf<class AActor> bulletFactory;
 
 
+
 	UFUNCTION()
 		void GunFire();	
 
-	FORCEINLINE EEnemyWeapon GetEnemyWeapon() { return mState; }
-	FORCEINLINE void SetEnemyWeapon(EEnemyWeapon state) { mState = state; }
+	FORCEINLINE EEnemyWeapon GetEnemyWeapon() { return wState; }
+	FORCEINLINE void SetEnemyWeapon(EEnemyWeapon state) { wState = state; }
 
 	UFUNCTION()
 		void OnDieAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

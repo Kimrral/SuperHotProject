@@ -36,7 +36,7 @@ public:
 
 		
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = FSM)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = FSM)
 		EEnemyState mState = EEnemyState::Idle;
 
 	void IdleState();
@@ -74,5 +74,8 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = FSM)
 	bool bTestMove = false;
+
+	UPROPERTY()
+		class UEnemyAnim* anim;
 
 };

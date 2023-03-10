@@ -4,9 +4,9 @@
 #include "Enemy.h"
 #include "EnemyFSM.h"
 #include "Components/CapsuleComponent.h"
-#include "EnemyFSM.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/ActorComponent.h"
+#include "BaseWeapon.h"
 
 
 // Sets default values
@@ -62,11 +62,6 @@ AEnemy::AEnemy()
 
 	fsm = CreateDefaultSubobject<UEnemyFSM>(TEXT("FSM"));
 
-	/*
-	gunMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMeshComp"));
-	gunMeshComp->SetupAttachment(GetMesh());
-	*/
-
 }
 
 // Called when the game starts or when spawned
@@ -74,7 +69,7 @@ void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetEnemyWeapon(mState);
+	SetEnemyWeapon(wState);
 
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnDieAction);
 	
@@ -96,9 +91,8 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AEnemy::GunFire()
 {
-	FTransform firePosition = gunMeshComp->GetSocketTransform(TEXT("Muzzle"));
+	UE_LOG(LogTemp, Warning, TEXT("Enemy Fire"));
 
-	GetWorld()->SpawnActor<AActor>(bulletFactory, firePosition);
 
 }
 
@@ -106,7 +100,7 @@ void AEnemy::OnDieAction(UPrimitiveComponent* OverlappedComponent, AActor* Other
 {
 	if (OtherActor->GetName().Contains(TEXT("BP_Projectile"))) {
 		fsm->mState = EEnemyState::Die;
-		UE_LOG(LogTemp, Warning, TEXT("DieState"));
+		UE_LOG(LogTemp, Warning, TEXT("Enemy Damage"));
 	}
 
 }
