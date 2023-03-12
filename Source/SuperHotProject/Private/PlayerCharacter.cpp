@@ -229,6 +229,7 @@ void APlayerCharacter::Fire()
 			}
 		}
 	}
+	// if not using weapon
 	else
 	{
 		
@@ -248,6 +249,7 @@ void APlayerCharacter::Fire()
 		{
 			if (bCanFire)
 			{
+				GetWorld()->SpawnActor<AActor>(BPPunchBoxComp, fireTrans);
 				int32 randInt = FMath::RandRange(1, 3);
 				FString montNum = FString::FromInt(randInt);
 				FName montName = FName(*montNum);

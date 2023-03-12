@@ -89,6 +89,8 @@ public:
 		TSubclassOf<class UUserWidget> noAmmoFactory;
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		TSubclassOf<class AActor> BPProjectile;	
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		TSubclassOf<class AActor> BPPunchBoxComp;
 	UPROPERTY(BlueprintReadOnly)
 		class UUserWidget* crosshairUI;
 	UPROPERTY(BlueprintReadOnly)
