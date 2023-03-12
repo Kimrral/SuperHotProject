@@ -7,6 +7,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/ActorComponent.h"
 #include "BaseWeapon.h"
+#include "Components/BoxComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 // Sets default values
@@ -24,6 +27,11 @@ AEnemy::AEnemy()
 		GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -90), FRotator(0, -90, 0));
 	}
 
+	HeadComp = CreateDefaultSubobject<UBoxComponent>(TEXT("HeadComp"));
+	HeadComp->SetupAttachment(GetMesh(),"headSocket");
+	HeadComp->SetBoxExtent(FVector(10, 10, 10));
+	HeadComp->SetRelativeLocation(FVector(0, 0, 170));
+
 	LeftArm = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("LeftArm"));
 	LeftArm->SetupAttachment(GetMesh());
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempLeftArm(TEXT("/Script/Engine.SkeletalMesh'/Game/MyeongSeok/PartsoftheBodies/UE4_Mannequin_Leftarm.UE4_Mannequin_Leftarm'"));
@@ -31,6 +39,10 @@ AEnemy::AEnemy()
 		LeftArm->SetSkeletalMesh(tempLeftArm.Object);
 	}
 
+	LeftArmComp = CreateDefaultSubobject<UBoxComponent>(TEXT("LeftArmComp"));
+	LeftArmComp->SetupAttachment(LeftArm,"root");
+	LeftArmComp->SetBoxExtent(FVector(8, 30, 15));
+	LeftArmComp->SetRelativeLocation(FVector(10, 30, 150));
 
 	RightArm = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("RightArm"));
 	RightArm->SetupAttachment(GetMesh());
@@ -39,12 +51,23 @@ AEnemy::AEnemy()
 		RightArm->SetSkeletalMesh(tempRightArm.Object);
 	}
 
+	RightArmComp = CreateDefaultSubobject<UBoxComponent>(TEXT("RightArmComp"));
+	RightArmComp->SetupAttachment(RightArm,"root");
+	RightArmComp->SetBoxExtent(FVector(8, 39, 15));
+	RightArmComp->SetRelativeLocation(FVector(-20, 20, 140));
+
 	Body = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Body"));
 	Body->SetupAttachment(GetMesh());
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempBody(TEXT("/Script/Engine.SkeletalMesh'/Game/MyeongSeok/PartsoftheBodies/UE4_Mannequin_Body.UE4_Mannequin_Body'"));
 	if (tempBody.Succeeded()) {
 		Body->SetSkeletalMesh(tempBody.Object);
 	}
+
+	BodyComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BodyComp"));
+	BodyComp->SetupAttachment(Body);
+	BodyComp->SetBoxExtent(FVector(20, 20, 20));
+	BodyComp->SetRelativeLocation(FVector(0, 0, 130));
+
 
 	LeftLeg = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("LeftLeg"));
 	LeftLeg->SetupAttachment(GetMesh());
@@ -53,12 +76,27 @@ AEnemy::AEnemy()
 		LeftLeg->SetSkeletalMesh(tempLeftLeg.Object);
 	}
 
+	LeftLegComp = CreateDefaultSubobject<UBoxComponent>(TEXT("LeftLegComp"));
+	LeftLegComp->SetupAttachment(LeftLeg, "thigh_lSocket");
+	LeftLegComp->SetBoxExtent(FVector(10, 17, 45));
+	LeftLegComp->SetRelativeLocation(FVector(13, 0, 45));
+
+
 	RightLeg = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("RightLeg"));
 	RightLeg->SetupAttachment(GetMesh());
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempRightLeg(TEXT("/Script/Engine.SkeletalMesh'/Game/MyeongSeok/PartsoftheBodies/UE4_Mannequin_RightLeg.UE4_Mannequin_RightLeg'"));
 	if (tempRightLeg.Succeeded()) {
 		RightLeg->SetSkeletalMesh(tempRightLeg.Object);
 	}
+
+	RightLegComp = CreateDefaultSubobject<UBoxComponent>(TEXT("RightLegComp"));
+	RightLegComp->SetupAttachment(RightLeg,"thigh_rSocket");
+	RightLegComp->SetBoxExtent(FVector(11, 15, 45));
+	RightLegComp->SetRelativeLocation(FVector(-11, 0, 49));
+
+
+	GunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMesh"));
+	GunMesh->SetupAttachment(GetMesh(), "Weapon_R");
 
 	fsm = CreateDefaultSubobject<UEnemyFSM>(TEXT("FSM"));
 
@@ -72,6 +110,7 @@ void AEnemy::BeginPlay()
 	SetEnemyWeapon(wState);
 
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnDieAction);
+
 	
 }
 
@@ -93,15 +132,31 @@ void AEnemy::GunFire()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Enemy Fire"));
 
-
+	if (GetEnemyWeapon() == EEnemyWeapon::Gun) {
+		FTransform socketTrans = GunMesh->GetSocketTransform(TEXT("FireSocket"));
+		FVector fireLoc = socketTrans.GetLocation();
+		FRotator fireRot = socketTrans.GetRotation().Rotator();
+		FTransform fireTrans = UKismetMathLibrary::MakeTransform(fireLoc,fireRot);
+		GetWorld()->SpawnActor<AActor>(bulletFactory, fireTrans);
+	}
 }
 
 void AEnemy::OnDieAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	
 	if (OtherActor->GetName().Contains(TEXT("BP_Projectile"))) {
+		/*
+		if (GetEnemyWeapon() == EEnemyWeapon::Gun) {
+			GetWorld()->SpawnActor<ABaseWeapon>(WeaponFactroy, GetActorTransform());
+		}
 		fsm->mState = EEnemyState::Die;
+		*/
 		UE_LOG(LogTemp, Warning, TEXT("Enemy Damage"));
 	}
 
+}
+
+void AEnemy::Die()
+{
 }
 

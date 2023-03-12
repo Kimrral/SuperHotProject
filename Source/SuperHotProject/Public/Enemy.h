@@ -56,12 +56,35 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
 		class USkeletalMeshComponent* RightLeg;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+		class UBoxComponent* HeadComp;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
-		class USkeletalMeshComponent* gunMeshComp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+		class UBoxComponent* LeftArmComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+		class UBoxComponent* RightArmComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+		class UBoxComponent* BodyComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+		class UBoxComponent* LeftLegComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+		class UBoxComponent* RightLegComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+		class USkeletalMeshComponent* GunMesh;
+
+
 
 	UPROPERTY(EditDefaultsOnly, Category = Settings)
 		TSubclassOf<class AActor> bulletFactory;
+
+
+	UPROPERTY(EditDefaultsOnly, Category = Settings)
+		TSubclassOf<class ABaseWeapon> WeaponFactroy;
 
 
 
@@ -74,4 +97,6 @@ public:
 	UFUNCTION()
 		void OnDieAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UFUNCTION(BlueprintCallable)
+		void Die();
 };
