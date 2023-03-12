@@ -19,7 +19,7 @@ public:
 	APlayerWeapon_Shotgun();
 
 
-	UPROPERTY(EditAnywhere, Category = Settings)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
 		class UStaticMeshComponent* shotgunComp;
 
 

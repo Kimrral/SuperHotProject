@@ -181,20 +181,26 @@ void APlayerCharacter::Fire()
 	if (isWeaponEquipped)
 	{
 		// if using shotgun
-		if (isUsingShotgun&&bCanFire&&CurShotgunBullet!=0)
+		if (isUsingShotgun&&CurShotgunBullet!=0)
 		{
-			CurShotgunBullet -= 1;
-			UGameplayStatics::PlaySound2D(GetWorld(), pistol_fire, 1, 1, 0, nullptr, nullptr, false);
-			GetWorld()->SpawnActor<AActor>(BPProjectile, fireTrans);
-			ResetFireCooldown();
+			if (bCanFire)
+			{
+				CurShotgunBullet -= 1;
+				ACharacter::PlayAnimMontage(punchMontage, 1.0f, TEXT("Fire"));
+				UGameplayStatics::PlaySound2D(GetWorld(), shotgun_fire, 1, 1, 0, nullptr, nullptr, false);
+				SpawnShotgunBullet();
+				bCanFire = false;
+				ResetFireCooldown();
+			}
+
 		}
 		else if (isUsingShotgun&&bCanFire && CurShotgunBullet == 0)
-		{
-			bTestTime = true;
-			UGameplayStatics::PlaySound2D(GetWorld(), pistolPickup, 0.5, 1, 0, nullptr, nullptr, false);
-			UGameplayStatics::PlaySound2D(GetWorld(), OutOfAmmo, 1.5, 1, 0, nullptr, nullptr, true);
-			noAmmoUI->AddToViewport();
-			bTestTime = false;
+		{			
+				bTestTime = true;
+				UGameplayStatics::PlaySound2D(GetWorld(), pistolPickup, 0.5, 1, 0, nullptr, nullptr, false);
+				UGameplayStatics::PlaySound2D(GetWorld(), OutOfAmmo, 1.5, 1, 0, nullptr, nullptr, true);
+				noAmmoUI->AddToViewport();
+				bTestTime = false;			
 		}
 		// if using pistol
 		else
@@ -363,3 +369,4 @@ void APlayerCharacter::Attach()
 
 
 }
+

@@ -46,6 +46,8 @@ public:
 	void ResetFireCooldown();
 	UFUNCTION(BlueprintImplementableEvent)
 		void DetachPistol();
+	UFUNCTION(BlueprintImplementableEvent)
+		void SpawnShotgunBullet();
 	UFUNCTION()
 	void DetachWeapon();
 	UFUNCTION()
@@ -113,6 +115,8 @@ public:
 	class UAnimMontage* punchMontage;
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 	class USoundBase* pistol_fire;
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		class USoundBase* shotgun_fire;
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 	class USoundBase* pistol_pickup;
 	UPROPERTY(EditAnywhere)
