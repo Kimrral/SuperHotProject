@@ -101,6 +101,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		InputSystem->BindAction(IA_Jump, ETriggerEvent::Triggered, this, &APlayerCharacter::Jump);
 		InputSystem->BindAction(IA_Jump, ETriggerEvent::Completed, this, &APlayerCharacter::JumpEnd);
 		InputSystem->BindAction(IA_Fire, ETriggerEvent::Triggered, this, &APlayerCharacter::Fire);
+		InputSystem->BindAction(IA_Fire, ETriggerEvent::Completed, this, &APlayerCharacter::FireReleased);
 		InputSystem->BindAction(IA_Unequip, ETriggerEvent::Triggered, this, &APlayerCharacter::Unequip);
 		InputSystem->BindAction(IA_Throw, ETriggerEvent::Triggered, this, &APlayerCharacter::Throw);
 		InputSystem->BindAction(IA_Attach, ETriggerEvent::Triggered, this, &APlayerCharacter::Attach);
@@ -181,9 +182,10 @@ void APlayerCharacter::Fire()
 	if (isWeaponEquipped)
 	{
 		// if using shotgun
-		if (isUsingShotgun&&CurShotgunBullet!=0)
+		if (isUsingUzi==false&&isUsingShotgun==true)
 		{
-			if (bCanFire)
+			// if using shotgun and have ammo
+			if (bCanFire && CurShotgunBullet > 0)
 			{
 				CurShotgunBullet -= 1;
 				ACharacter::PlayAnimMontage(punchMontage, 1.0f, TEXT("Fire"));
@@ -192,20 +194,26 @@ void APlayerCharacter::Fire()
 				bCanFire = false;
 				ResetFireCooldown();
 			}
-
-		}
-		else if (isUsingShotgun&&bCanFire && CurShotgunBullet == 0)
-		{			
-				bTestTime = true;
-				UGameplayStatics::PlaySound2D(GetWorld(), pistolPickup, 0.5, 1, 0, nullptr, nullptr, false);
-				UGameplayStatics::PlaySound2D(GetWorld(), OutOfAmmo, 1.5, 1, 0, nullptr, nullptr, true);
-				noAmmoUI->AddToViewport();
-				bTestTime = false;			
+		// if using shotgun but have no ammo
+			else if (isUsingShotgun && CurShotgunBullet <= 0)
+			{	
+				if (bCanFire)
+				{
+					bTestTime = true;
+					UGameplayStatics::PlaySound2D(GetWorld(), pistolPickup, 0.5, 1, 0, nullptr, nullptr, false);
+					UGameplayStatics::PlaySound2D(GetWorld(), OutOfAmmo, 1.5, 1, 0, nullptr, nullptr, true);
+					noAmmoUI->AddToViewport();
+					bCanFire = false;
+					ResetFireCooldown();
+					bTestTime = false;
+				}
+			}
 		}
 		// if using pistol
-		else
+		else if(isUsingUzi == false && isUsingShotgun==false)
 		{
-			if (bCanFire && CurPistolBullet != 0)
+			// if using pistol and have ammo
+			if (bCanFire && CurPistolBullet > 0)
 			{
 				bTestTime = true;
 				CurPistolBullet -= 1;
@@ -217,16 +225,63 @@ void APlayerCharacter::Fire()
 				ResetFireCooldown();
 				bTestTime = false;
 			}
-			else if (bCanFire && CurPistolBullet == 0)
+			// if using pistol but have no ammo
+			else if (CurPistolBullet <= 0)
 			{
-				bTestTime = true;
-				UGameplayStatics::PlaySound2D(GetWorld(), pistolPickup, 0.5, 1, 0, nullptr, nullptr, false);
-				UGameplayStatics::PlaySound2D(GetWorld(), OutOfAmmo, 1.5, 1, 0, nullptr, nullptr, true);
-				noAmmoUI->AddToViewport();
-				bTestTime = false;
+				if (bCanFire)
+				{
+					bTestTime = true;
+					UGameplayStatics::PlaySound2D(GetWorld(), pistolPickup, 0.5, 1, 0, nullptr, nullptr, false);
+					UGameplayStatics::PlaySound2D(GetWorld(), OutOfAmmo, 1.5, 1, 0, nullptr, nullptr, true);
+					noAmmoUI->AddToViewport();
+					bCanFire = false;
+					ResetFireCooldown();
+					bTestTime = false;
+				}
 
 
 			}
+		}
+		// if using uzi
+		else// if (isUsingUzi==true&&isUsingShotgun==false)
+		{
+			// if using uzi and have ammo
+			if (bCanFire && CurUziBullet > 0)
+			{
+					GetWorld()->GetTimerManager().SetTimer(fireTimerHandle, FTimerDelegate::CreateLambda([this]()->void {
+					if (CurUziBullet <= 0)
+					{
+						GetWorld()->GetTimerManager().ClearTimer(fireTimerHandle);
+					}
+						//bCanFire = true;
+					FVector fireLoc = GetMesh()->GetSocketLocation(TEXT("FireSocket"));
+					FRotator fireRot = VRCamera->GetComponentRotation();
+					int32 randrot = FMath::RandRange(-1, 1);
+					FTransform fireTrans = UKismetMathLibrary::MakeTransform(fireLoc, fireRot+FRotator(randrot, randrot, randrot));
+					CurUziBullet -= 1;
+					UE_LOG(LogTemp, Warning, TEXT("UziAmmo:%d"), CurUziBullet);
+				UGameplayStatics::PlaySound2D(GetWorld(), pistol_fire, 1, 1, 0, nullptr, nullptr, false);
+				GetWorld()->SpawnActor<AActor>(BPProjectile, fireTrans);
+				//bCanFire = false;
+				//ResetUziFireCooldown();
+					}), 0.10, true);
+
+			}
+			// if using uzi but have no ammo
+			else if (CurUziBullet <= 0)
+			{
+				if (bCanFire)
+				{
+					bTestTime = true;
+					UGameplayStatics::PlaySound2D(GetWorld(), pistolPickup, 0.5, 1, 0, nullptr, nullptr, false);
+					UGameplayStatics::PlaySound2D(GetWorld(), OutOfAmmo, 1.5, 1, 0, nullptr, nullptr, true);
+					noAmmoUI->AddToViewport();
+					bCanFire = false;
+					ResetFireCooldown();
+					bTestTime = false;
+				}
+			}
+
 		}
 	}
 	// if not using weapon
@@ -344,8 +399,9 @@ void APlayerCharacter::DetachWeapon()
 
 void APlayerCharacter::Attach()
 {
-	CurPistolBullet = MaxPistolBullet;
-	CurShotgunBullet = MaxShotgunBullet;
+	//CurPistolBullet = MaxPistolBullet;
+	//CurShotgunBullet = MaxShotgunBullet;
+	//CurUziBullet = MaxUziBullet;
 	return;
 	if (isWeaponEquipped == false)
 	{
@@ -372,3 +428,7 @@ void APlayerCharacter::Attach()
 
 }
 
+void APlayerCharacter::FireReleased()
+{
+	GetWorld()->GetTimerManager().ClearTimer(fireTimerHandle);
+}

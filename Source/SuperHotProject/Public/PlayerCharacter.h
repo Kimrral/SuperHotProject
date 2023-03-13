@@ -38,12 +38,15 @@ public:
 	void Jump();
 	void JumpEnd();
 	void Fire();
+	void FireReleased();
 	void Throw();
 	void Unequip();
 	UFUNCTION(BlueprintCallable)
 	bool IsMoving();
 	UFUNCTION(BlueprintImplementableEvent)
 	void ResetFireCooldown();
+	UFUNCTION(BlueprintImplementableEvent)
+	void ResetUziFireCooldown();
 	UFUNCTION(BlueprintImplementableEvent)
 		void DetachPistol();
 	UFUNCTION(BlueprintImplementableEvent)
@@ -107,6 +110,8 @@ public:
 		bool isWeaponEquipped = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool isUsingShotgun = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool isUsingUzi = false;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		bool bCanFire = true;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
@@ -128,19 +133,25 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		TSubclassOf<class APlayerWeapon_Pistol> pistolFactory;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
 		int32 MaxPistolBullet = 5;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
 		int32 CurPistolBullet;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
 		int32 MaxShotgunBullet = 3;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
 		int32 CurShotgunBullet;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+		int32 MaxUziBullet = 15;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+		int32 CurUziBullet;
+
+	FTimerHandle fireTimerHandle;
 
 	
 
