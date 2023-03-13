@@ -110,6 +110,12 @@ void AEnemy::BeginPlay()
 	SetEnemyWeapon(wState);
 
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnDieAction);
+	HeadComp->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnHitHeadAction);
+	LeftArmComp->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnHitLeftArmAction);
+	RightArmComp->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnHitRightArmAction);
+	BodyComp->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnHitBodyAction);
+	LeftLegComp->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnHitLeftlegAction);
+	RightLegComp->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnHitRightlegAction);
 
 	
 }
@@ -156,7 +162,82 @@ void AEnemy::OnDieAction(UPrimitiveComponent* OverlappedComponent, AActor* Other
 
 }
 
-void AEnemy::Die()
+void AEnemy::OnHitHeadAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (OtherActor->GetName().Contains(TEXT("BP_Player"))) {
+		fsm->mState = EEnemyState::Die;
+		UE_LOG(LogTemp, Warning, TEXT("Head Hit"));
+	}
+
+	if (OtherActor->GetName().Contains(TEXT("BP_Punch"))) {
+		bHitHead = true;
+		UE_LOG(LogTemp, Warning, TEXT("Punch Head Hit"));
+	}
 }
+
+void AEnemy::OnHitBodyAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor->GetName().Contains(TEXT("BP_Player"))) {
+		fsm->mState = EEnemyState::Die;
+		UE_LOG(LogTemp, Warning, TEXT("Body Hit"));
+	}
+
+	if (OtherActor->GetName().Contains(TEXT("BP_Punch"))) {
+		bHitBody = true;
+		UE_LOG(LogTemp, Warning, TEXT("Punch Body Hit"));
+	}
+}
+
+void AEnemy::OnHitLeftArmAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor->GetName().Contains(TEXT("BP_Player"))) {
+		fsm->mState = EEnemyState::Die;
+		UE_LOG(LogTemp, Warning, TEXT("LeftArm Hit"));
+	}
+
+	if (OtherActor->GetName().Contains(TEXT("BP_Punch"))) {
+		bHitLeftArm = true;
+		UE_LOG(LogTemp, Warning, TEXT("Punch LeftArm Hit"));
+	}
+}
+
+void AEnemy::OnHitLeftlegAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor->GetName().Contains(TEXT("BP_Player"))) {
+		fsm->mState = EEnemyState::Die;
+		UE_LOG(LogTemp, Warning, TEXT("LeftLeg Hit"));
+	}
+
+	if (OtherActor->GetName().Contains(TEXT("BP_Punch"))) {
+		bHitLeftleg = true;
+		UE_LOG(LogTemp, Warning, TEXT("Punch LeftLeg Hit"));
+	}
+}
+
+void AEnemy::OnHitRightArmAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor->GetName().Contains(TEXT("BP_Player"))) {
+		fsm->mState = EEnemyState::Die;
+		UE_LOG(LogTemp, Warning, TEXT("RightArm Hit"));
+	}
+
+	if (OtherActor->GetName().Contains(TEXT("BP_Punch"))) {
+		bHitRightArm = true;
+		UE_LOG(LogTemp, Warning, TEXT("Punch RightArm Hit"));
+	}
+}
+
+void AEnemy::OnHitRightlegAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor->GetName().Contains(TEXT("BP_Player"))) {
+		fsm->mState = EEnemyState::Die;
+		UE_LOG(LogTemp, Warning, TEXT("RightLeg Hit"));
+	}
+
+	if (OtherActor->GetName().Contains(TEXT("BP_Punch"))) {
+		bHitRightleg = true;
+		UE_LOG(LogTemp, Warning, TEXT("Punch RightLeg Hit"));
+	}
+}
+
 

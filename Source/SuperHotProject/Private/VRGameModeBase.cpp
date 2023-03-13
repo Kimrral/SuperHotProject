@@ -2,4 +2,10 @@
 
 
 #include "VRGameModeBase.h"
+#include "Enemy.h"
+#include "EngineUtils.h"
 
+
+void AVRGameModeBase::BeginPlay() {
+
+}
