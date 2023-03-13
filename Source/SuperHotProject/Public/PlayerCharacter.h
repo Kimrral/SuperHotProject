@@ -132,6 +132,20 @@ public:
 	class APlayerWeapon_Pistol* Pistol;
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		TSubclassOf<class APlayerWeapon_Pistol> pistolFactory;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MotionController")
+		class UMotionControllerComponent* LeftHand;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MotionController")
+		class UMotionControllerComponent* RightHand;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MotionController")
+		class USkeletalMeshComponent* LeftHandMesh;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MotionController")
+		class USkeletalMeshComponent* RightHandMesh;
+	// 집게손가락 표시할 모션컨트롤러
+	UPROPERTY(VisibleAnywhere, Category = "HandComp", meta = (AllowPrivateAccess = true))
+		class UMotionControllerComponent* RightAim;
+
+
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
 		int32 MaxPistolBullet = 5;

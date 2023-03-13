@@ -7,7 +7,10 @@
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "MotionControllerComponent.h"
+#include "HeadMountedDisplayFunctionLibrary.h"
 #include "PlayerWeapon_Pistol.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "BaseWeapon.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -20,10 +23,67 @@ APlayerCharacter::APlayerCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	// 손 추가
+	LeftHand = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("LeftHand"));
+	LeftHand->SetupAttachment(RootComponent);
+	LeftHand->SetTrackingMotionSource(FName("Left"));
+	RightHand = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("RightHand"));
+	RightHand->SetupAttachment(RootComponent);
+	RightHand->SetTrackingMotionSource(FName("Right"));
+
+	// 스켈레탈 메시 컴포넌트 만들기
+	LeftHandMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("LeftHandMesh"));
+	LeftHandMesh->SetupAttachment(LeftHand);
+	RightHandMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("RightHandMesh"));
+	RightHandMesh->SetupAttachment(RightHand);
+
+	// 집게손가락
+	RightAim = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("RightAim"));
+	RightAim->SetupAttachment(RootComponent);
+	RightAim->SetTrackingMotionSource(FName("RightAim"));
+
+	ConstructorHelpers::FObjectFinder<USkeletalMesh>tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/MannequinsXR/Meshes/SKM_QuinnXR_left.SKM_QuinnXR_left'"));
+	if (tempMesh.Succeeded())
+	{
+		LeftHandMesh->SetSkeletalMesh(tempMesh.Object);
+		//(X=-2.981260,Y=-3.500000,Z=4.561753)
+		//(Pitch=-25.000000,Yaw=-179.999999,Roll=89.999998)
+
+		LeftHandMesh->SetRelativeLocationAndRotation(FVector(-2.981260, -3.500000, 4.561753), FRotator(-25.000000, -179.999999, 89.999998));
+
+	}
+	ConstructorHelpers::FObjectFinder<USkeletalMesh>tempMesh2(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/MannequinsXR/Meshes/SKM_QuinnXR_right.SKM_QuinnXR_right'"));
+	if (tempMesh2.Succeeded())
+	{
+		RightHandMesh->SetSkeletalMesh(tempMesh2.Object);
+		//(X=-2.981260,Y=3.500000,Z=4.561753)
+		//(Pitch=25.000000,Yaw=0.000000,Roll=89.999999)
+		RightHandMesh->SetRelativeLocationAndRotation(FVector(-2.981260, 3.500000, 4.561753), FRotator(25.000000, 0, 89.999999));
+
+	}
+
+	// HMD가 연결되어 있지 않으면
+	/*if (UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayEnabled() == false)
+	{
+		//  Hand를 테스트 할 수 있는 위치로 이동시키자.
+		RightAim->SetRelativeLocation(FVector(20, 20, 0));
+		RightHand->SetRelativeLocation(FVector(20, 20, 0));
+		// 카메라의 UsePawn Control Rotation 을 활성화 시키자.
+		VRCamera->bUsePawnControlRotation = true;
+
+	}
+	// HMD가 연결되어 있다면
+	else
+	{
+		// -> 기본 트랙킹 offset 설정
+		UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Eye);
+	}*/
+
 	VRCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("VRCamera"));
-	VRCamera->SetupAttachment(GetMesh(), TEXT("FPSCamera"));
+	VRCamera->SetupAttachment(RootComponent);
 	VRCamera->bUsePawnControlRotation = true;
 	VRCamera->SetFieldOfView(60.0f);
+	VRCamera->AddRelativeLocation(FVector(0, 0, 60));
 	
 }
 
