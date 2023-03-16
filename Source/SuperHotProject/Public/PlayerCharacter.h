@@ -144,7 +144,8 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "HandComp", meta = (AllowPrivateAccess = true))
 		class UMotionControllerComponent* RightAim;
 
-
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+		class UInputMappingContext* IMC_Hand;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)

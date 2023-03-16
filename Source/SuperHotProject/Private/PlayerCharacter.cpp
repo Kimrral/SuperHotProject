@@ -28,6 +28,7 @@ APlayerCharacter::APlayerCharacter()
 	LeftHand->SetupAttachment(RootComponent);
 	LeftHand->SetTrackingMotionSource(FName("Left"));
 	RightHand = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("RightHand"));
+	
 	RightHand->SetupAttachment(RootComponent);
 	RightHand->SetTrackingMotionSource(FName("Right"));
 
@@ -42,48 +43,28 @@ APlayerCharacter::APlayerCharacter()
 	RightAim->SetupAttachment(RootComponent);
 	RightAim->SetTrackingMotionSource(FName("RightAim"));
 
-	ConstructorHelpers::FObjectFinder<USkeletalMesh>tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/MannequinsXR/Meshes/SKM_QuinnXR_left.SKM_QuinnXR_left'"));
-	if (tempMesh.Succeeded())
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/MannequinsXR/Meshes/SKM_MannyXR_left.SKM_MannyXR_left'"));
+	if (TempMesh.Succeeded())
 	{
-		LeftHandMesh->SetSkeletalMesh(tempMesh.Object);
-		//(X=-2.981260,Y=-3.500000,Z=4.561753)
-		//(Pitch=-25.000000,Yaw=-179.999999,Roll=89.999998)
-
-		LeftHandMesh->SetRelativeLocationAndRotation(FVector(-2.981260, -3.500000, 4.561753), FRotator(-25.000000, -179.999999, 89.999998));
-
+		LeftHandMesh->SetSkeletalMesh(TempMesh.Object);
+		LeftHandMesh->SetRelativeLocation(FVector(-2.9f, -3.5f, 4.5f));
+		LeftHandMesh->SetRelativeRotation(FRotator(-25, -180, 90));
 	}
-	ConstructorHelpers::FObjectFinder<USkeletalMesh>tempMesh2(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/MannequinsXR/Meshes/SKM_QuinnXR_right.SKM_QuinnXR_right'"));
-	if (tempMesh2.Succeeded())
+	
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempMesh2(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/MannequinsXR/Meshes/SKM_MannyXR_right.SKM_MannyXR_right'"));
+	if (TempMesh2.Succeeded())
 	{
-		RightHandMesh->SetSkeletalMesh(tempMesh2.Object);
-		//(X=-2.981260,Y=3.500000,Z=4.561753)
-		//(Pitch=25.000000,Yaw=0.000000,Roll=89.999999)
-		RightHandMesh->SetRelativeLocationAndRotation(FVector(-2.981260, 3.500000, 4.561753), FRotator(25.000000, 0, 89.999999));
-
+		RightHandMesh->SetSkeletalMesh(TempMesh2.Object);
+		RightHandMesh->SetRelativeLocation(FVector(-2.9f, 3.5f, 4.5f));
+		RightHandMesh->SetRelativeRotation(FRotator(25, 0, 90));
 	}
 
-	// HMD가 연결되어 있지 않으면
-	/*if (UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayEnabled() == false)
-	{
-		//  Hand를 테스트 할 수 있는 위치로 이동시키자.
-		RightAim->SetRelativeLocation(FVector(20, 20, 0));
-		RightHand->SetRelativeLocation(FVector(20, 20, 0));
-		// 카메라의 UsePawn Control Rotation 을 활성화 시키자.
-		VRCamera->bUsePawnControlRotation = true;
 
-	}
-	// HMD가 연결되어 있다면
-	else
-	{
-		// -> 기본 트랙킹 offset 설정
-		UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Eye);
-	}*/
 
 	VRCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("VRCamera"));
 	VRCamera->SetupAttachment(RootComponent);
-	VRCamera->bUsePawnControlRotation = true;
-	VRCamera->SetFieldOfView(60.0f);
-	VRCamera->AddRelativeLocation(FVector(0, 0, 60));
+	VRCamera->bUsePawnControlRotation = false;
+	VRCamera->SetFieldOfView(90.0f);
 	
 }
 
@@ -91,6 +72,8 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+
 
 	// Enhanced Input 사용처리
 	auto PC = Cast<APlayerController>(GetWorld()->GetFirstPlayerController());
@@ -102,10 +85,34 @@ void APlayerCharacter::BeginPlay()
 		if (subSystem)
 		{
 			subSystem->AddMappingContext(IMC_Default, 0);
+			subSystem->AddMappingContext(IMC_Hand, 0);
 		}
 	}
 		crosshairUI = CreateWidget<UUserWidget>(GetWorld(), crosshairFactory);
 		noAmmoUI = CreateWidget<UUserWidget>(GetWorld(), noAmmoFactory);
+		
+		// HMD가 연결되어 있지 않으면
+	if (UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayEnabled() == false)
+	{
+	//  Hand를 테스트 할 수 있는 위치로 이동시키자.
+	RightAim->SetRelativeLocation(FVector(20, 20, 0));
+	RightHand->SetRelativeLocation(FVector(20, 20, 0));
+	// 카메라의 UsePawn Control Rotation 을 활성화 시키자.
+	VRCamera->bUsePawnControlRotation = true;
+	
+	VRCamera->AddRelativeLocation(FVector(0, 0, 88));
+
+
+	}
+// HMD가 연결되어 있다면
+	else
+	{
+	// -> 기본 트랙킹 offset 설정
+	UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Eye);
+	VRCamera->bUsePawnControlRotation = false;
+	}
+		
+		
 		//if (isEnterUIEnd)
 		//{
 		//	crosshairUI->AddToViewport();
@@ -121,7 +128,20 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	
+	FVector leftHandPosition = LeftHand->GetComponentLocation();
+	FVector rightHandPosition = RightHand->GetComponentLocation();
+
+	UE_LOG(LogTemp, Warning, TEXT("leftHandPosition position: %s"), *leftHandPosition.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("rightHandPosition position: %s"), *rightHandPosition.ToString());
+
+
+	// HMD 가 연결돼 있지 않으면
+	if (UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayEnabled() == false)
+	{
+		// -> 손이 카메라 방향과 일치하도록 하자
+		RightHand->SetRelativeRotation(VRCamera->GetRelativeRotation());
+		RightAim->SetRelativeRotation(VRCamera->GetRelativeRotation());
+	}
 
 	if (bTestTime == true)
 	{
