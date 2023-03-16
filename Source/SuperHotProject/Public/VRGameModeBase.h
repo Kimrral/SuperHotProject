@@ -13,5 +13,21 @@ UCLASS()
 class SUPERHOTPROJECT_API AVRGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
+protected:
+	virtual void BeginPlay() override;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+	TArray<class AEnemy*> enemies;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+		int32 totalEnemy = 0;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+		bool bClear = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+		bool bSpawn = false;
 	
 };

@@ -77,7 +77,23 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
 		class USkeletalMeshComponent* GunMesh;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+		bool bHitHead = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+		bool bHitBody = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+		bool bHitLeftArm = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+		bool bHitLeftleg = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+		bool bHitRightArm = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+		bool bHitRightleg = false;
 
 	UPROPERTY(EditDefaultsOnly, Category = Settings)
 		TSubclassOf<class AActor> bulletFactory;
@@ -97,6 +113,24 @@ public:
 	UFUNCTION()
 		void OnDieAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	UFUNCTION(BlueprintCallable)
-		void Die();
+
+	UFUNCTION()
+		void OnHitHeadAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+		void OnHitBodyAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+		void OnHitLeftArmAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+		void OnHitLeftlegAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+		void OnHitRightArmAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+		void OnHitRightlegAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+
 };
