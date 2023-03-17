@@ -10,6 +10,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -139,6 +140,7 @@ void AEnemy::GunFire()
 	UE_LOG(LogTemp, Warning, TEXT("Enemy Fire"));
 
 	if (GetEnemyWeapon() == EEnemyWeapon::Gun) {
+		UGameplayStatics::PlaySound2D(GetWorld(), pistol_fire, 1, 1, 0, nullptr, nullptr, false);
 		FTransform socketTrans = GunMesh->GetSocketTransform(TEXT("FireSocket"));
 		FVector fireLoc = socketTrans.GetLocation();
 		FRotator fireRot = socketTrans.GetRotation().Rotator();
@@ -164,12 +166,13 @@ void AEnemy::OnDieAction(UPrimitiveComponent* OverlappedComponent, AActor* Other
 
 void AEnemy::OnHitHeadAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor->GetName().Contains(TEXT("BP_Player"))) {
+	if (OtherActor->GetName().Contains(TEXT("BP_Player")) && !bDead) {
+		bDead = true;
 		fsm->mState = EEnemyState::Die;
 		UE_LOG(LogTemp, Warning, TEXT("Head Hit"));
 	}
 
-	if (OtherActor->GetName().Contains(TEXT("BP_Punch"))) {
+	if (OtherActor->GetName().Contains(TEXT("BP_Punch")) && !bHitHead) {
 		bHitHead = true;
 		UE_LOG(LogTemp, Warning, TEXT("Punch Head Hit"));
 	}
@@ -177,12 +180,13 @@ void AEnemy::OnHitHeadAction(UPrimitiveComponent* OverlappedComponent, AActor* O
 
 void AEnemy::OnHitBodyAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor->GetName().Contains(TEXT("BP_Player"))) {
+	if (OtherActor->GetName().Contains(TEXT("BP_Player")) && !bDead) {
+		bDead = true;
 		fsm->mState = EEnemyState::Die;
 		UE_LOG(LogTemp, Warning, TEXT("Body Hit"));
 	}
 
-	if (OtherActor->GetName().Contains(TEXT("BP_Punch"))) {
+	if (OtherActor->GetName().Contains(TEXT("BP_Punch")) && !bHitBody) {
 		bHitBody = true;
 		UE_LOG(LogTemp, Warning, TEXT("Punch Body Hit"));
 	}
@@ -190,12 +194,13 @@ void AEnemy::OnHitBodyAction(UPrimitiveComponent* OverlappedComponent, AActor* O
 
 void AEnemy::OnHitLeftArmAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor->GetName().Contains(TEXT("BP_Player"))) {
+	if (OtherActor->GetName().Contains(TEXT("BP_Player")) && !bDead) {
+		bDead = true;
 		fsm->mState = EEnemyState::Die;
 		UE_LOG(LogTemp, Warning, TEXT("LeftArm Hit"));
 	}
 
-	if (OtherActor->GetName().Contains(TEXT("BP_Punch"))) {
+	if (OtherActor->GetName().Contains(TEXT("BP_Punch")) && !bHitLeftArm) {
 		bHitLeftArm = true;
 		UE_LOG(LogTemp, Warning, TEXT("Punch LeftArm Hit"));
 	}
@@ -203,12 +208,14 @@ void AEnemy::OnHitLeftArmAction(UPrimitiveComponent* OverlappedComponent, AActor
 
 void AEnemy::OnHitLeftlegAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor->GetName().Contains(TEXT("BP_Player"))) {
+	if (OtherActor->GetName().Contains(TEXT("BP_Player")) && !bDead) {
+		bDead = true;
 		fsm->mState = EEnemyState::Die;
 		UE_LOG(LogTemp, Warning, TEXT("LeftLeg Hit"));
 	}
 
-	if (OtherActor->GetName().Contains(TEXT("BP_Punch"))) {
+	if (OtherActor->GetName().Contains(TEXT("BP_Punch")) && !bHitLeftleg) {
+
 		bHitLeftleg = true;
 		UE_LOG(LogTemp, Warning, TEXT("Punch LeftLeg Hit"));
 	}
@@ -216,12 +223,13 @@ void AEnemy::OnHitLeftlegAction(UPrimitiveComponent* OverlappedComponent, AActor
 
 void AEnemy::OnHitRightArmAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor->GetName().Contains(TEXT("BP_Player"))) {
+	if (OtherActor->GetName().Contains(TEXT("BP_Player")) && !bDead) {
+		bDead = true;
 		fsm->mState = EEnemyState::Die;
 		UE_LOG(LogTemp, Warning, TEXT("RightArm Hit"));
 	}
 
-	if (OtherActor->GetName().Contains(TEXT("BP_Punch"))) {
+	if (OtherActor->GetName().Contains(TEXT("BP_Punch")) && !bHitRightArm) {
 		bHitRightArm = true;
 		UE_LOG(LogTemp, Warning, TEXT("Punch RightArm Hit"));
 	}
@@ -229,12 +237,13 @@ void AEnemy::OnHitRightArmAction(UPrimitiveComponent* OverlappedComponent, AActo
 
 void AEnemy::OnHitRightlegAction(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor->GetName().Contains(TEXT("BP_Player"))) {
+	if (OtherActor->GetName().Contains(TEXT("BP_Player")) && !bDead) {
+		bDead = true;
 		fsm->mState = EEnemyState::Die;
 		UE_LOG(LogTemp, Warning, TEXT("RightLeg Hit"));
 	}
 
-	if (OtherActor->GetName().Contains(TEXT("BP_Punch"))) {
+	if (OtherActor->GetName().Contains(TEXT("BP_Punch")) && !bHitRightleg) {
 		bHitRightleg = true;
 		UE_LOG(LogTemp, Warning, TEXT("Punch RightLeg Hit"));
 	}

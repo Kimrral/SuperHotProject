@@ -130,6 +130,7 @@ void UEnemyFSM::GunAttackState()
 	currentTime += GetWorld()->DeltaTimeSeconds;
 	ai->MoveToLocation(me->GetActorLocation());
 	if (currentTime > attackDelayTime) {
+		
 		me->GunFire();
 		currentTime = 0;
 		anim->bAttackPlay = true;

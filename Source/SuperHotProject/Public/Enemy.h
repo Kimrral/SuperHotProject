@@ -102,7 +102,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Settings)
 		TSubclassOf<class ABaseWeapon> WeaponFactroy;
 
+	UPROPERTY(EditDefaultsOnly, Category = Settings)
+		bool bDead = false;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		class USoundBase* pistol_fire;
 
 	UFUNCTION()
 		void GunFire();	
