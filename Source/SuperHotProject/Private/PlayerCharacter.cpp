@@ -10,6 +10,8 @@
 #include "MotionControllerComponent.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "PlayerWeapon_Pistol.h"
+#include "PlayerWeapon_Uzi.h"
+#include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "BaseWeapon.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -65,6 +67,16 @@ APlayerCharacter::APlayerCharacter()
 	VRCamera->SetupAttachment(RootComponent);
 	VRCamera->bUsePawnControlRotation = false;
 	VRCamera->SetFieldOfView(90.0f);
+
+		attachBoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("attachBoxComp"));
+	attachBoxComp->SetupAttachment(RightHandMesh);
+
+
+	//static ConstructorHelpers::FObjectFinder<APlayerWeapon_Uzi> uziRefs(TEXT("/Script/Engine.Blueprint'/Game/KHJContent/MyBlueprint/BP_PlayerWeapon_Uzi.BP_PlayerWeapon_Uzi'"));
+	//if (uziRefs.Object != NULL)
+	//{
+		//uziRef = Cast<APlayerWeapon_Uzi>(uziRefs.Object->StaticClass());
+	//}
 	
 }
 
@@ -118,8 +130,11 @@ void APlayerCharacter::BeginPlay()
 		//	crosshairUI->AddToViewport();
 		//}
 
-	
-	//Pistol = GetWorld()->SpawnActor<APlayerWeapon_Pistol>(pistolFactory, GetMesh()->GetComponentLocation(), GetMesh()->GetComponentRotation());
+	//FVector nullLoc = FVector(-1000, -1000, -1000);
+	//Pistol = GetWorld()->SpawnActor<APlayerWeapon_Pistol>(pistolFactory, nullLoc, FRotator::ZeroRotator);
+
+
+
 
 }
 
@@ -163,6 +178,18 @@ void APlayerCharacter::Tick(float DeltaTime)
 		}
 
 	}
+
+	FHitResult HitInfo;
+	FVector StartPos=VRCamera->GetComponentLocation();
+	FVector EndPos = StartPos + (VRCamera->GetForwardVector() * 500);
+	FCollisionQueryParams params;
+	params.AddIgnoredActor(this);
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitInfo, StartPos, EndPos, ECollisionChannel::ECC_Visibility, params);
+	if (bHit)
+	{
+		
+	}
+
 
 }
 
@@ -255,8 +282,11 @@ void APlayerCharacter::JumpEnd()
 void APlayerCharacter::Fire()
 {
 	FVector fireLoc = GetMesh()->GetSocketLocation(TEXT("FireSocket"));
+	FVector fireForward = VRCamera->GetComponentLocation() + (VRCamera->GetForwardVector() * 420.0f);
+	FVector punchForward = VRCamera->GetComponentLocation() + (VRCamera->GetForwardVector() * 50);
 	FRotator fireRot = VRCamera->GetComponentRotation();
 	FTransform fireTrans = UKismetMathLibrary::MakeTransform(fireLoc, fireRot);
+	FTransform fireForTrans = UKismetMathLibrary::MakeTransform(fireForward, fireRot);
 
 	// if using weapon
 	if (isWeaponEquipped)
@@ -282,7 +312,8 @@ void APlayerCharacter::Fire()
 					bTestTime = true;
 					UGameplayStatics::PlaySound2D(GetWorld(), pistolPickup, 0.5, 1, 0, nullptr, nullptr, false);
 					UGameplayStatics::PlaySound2D(GetWorld(), OutOfAmmo, 1.5, 1, 0, nullptr, nullptr, true);
-					noAmmoUI->AddToViewport();
+					//noAmmoUI->AddToViewport();
+					GetWorld()->SpawnActor<AActor>(BPNoAmmoUI, fireForTrans);
 					bCanFire = false;
 					ResetFireCooldown();
 					bTestTime = false;
@@ -295,12 +326,13 @@ void APlayerCharacter::Fire()
 			// if using pistol and have ammo
 			if (bCanFire && CurPistolBullet > 0)
 			{
+				
 				bTestTime = true;
 				CurPistolBullet -= 1;
 				ACharacter::PlayAnimMontage(punchMontage, 1.0f, TEXT("Fire"));
 				UGameplayStatics::PlaySound2D(GetWorld(), pistol_fire, 1, 1, 0, nullptr, nullptr, false);
 				//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), fireSmokeFactory, fireTrans);
-				GetWorld()->SpawnActor<AActor>(BPProjectile, fireTrans);
+				SpawnPistolBullet();
 				bCanFire = false;
 				ResetFireCooldown();
 				bTestTime = false;
@@ -313,7 +345,8 @@ void APlayerCharacter::Fire()
 					bTestTime = true;
 					UGameplayStatics::PlaySound2D(GetWorld(), pistolPickup, 0.5, 1, 0, nullptr, nullptr, false);
 					UGameplayStatics::PlaySound2D(GetWorld(), OutOfAmmo, 1.5, 1, 0, nullptr, nullptr, true);
-					noAmmoUI->AddToViewport();
+					//noAmmoUI->AddToViewport();
+					GetWorld()->SpawnActor<AActor>(BPNoAmmoUI, fireForTrans);
 					bCanFire = false;
 					ResetFireCooldown();
 					bTestTime = false;
@@ -323,7 +356,7 @@ void APlayerCharacter::Fire()
 			}
 		}
 		// if using uzi
-		else// if (isUsingUzi==true&&isUsingShotgun==false)
+		else if (isUsingUzi==true&&isUsingShotgun==false)
 		{
 			// if using uzi and have ammo
 			if (bCanFire && CurUziBullet > 0)
@@ -355,7 +388,8 @@ void APlayerCharacter::Fire()
 					bTestTime = true;
 					UGameplayStatics::PlaySound2D(GetWorld(), pistolPickup, 0.5, 1, 0, nullptr, nullptr, false);
 					UGameplayStatics::PlaySound2D(GetWorld(), OutOfAmmo, 1.5, 1, 0, nullptr, nullptr, true);
-					noAmmoUI->AddToViewport();
+					//noAmmoUI->AddToViewport();
+					GetWorld()->SpawnActor<AActor>(BPNoAmmoUI, fireForTrans);
 					bCanFire = false;
 					ResetFireCooldown();
 					bTestTime = false;
@@ -384,7 +418,7 @@ void APlayerCharacter::Fire()
 		{
 			if (bCanFire)
 			{
-				GetWorld()->SpawnActor<AActor>(BPPunchBoxComp, fireTrans);
+				GetWorld()->SpawnActor<AActor>(BPPunchBoxComp, punchForward, fireRot);
 				int32 randInt = FMath::RandRange(1, 3);
 				FString montNum = FString::FromInt(randInt);
 				FName montName = FName(*montNum);

@@ -28,7 +28,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere, Category = Settings)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
 		class USkeletalMeshComponent* pistolComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)

@@ -51,10 +51,18 @@ public:
 		void DetachPistol();
 	UFUNCTION(BlueprintImplementableEvent)
 		void SpawnShotgunBullet();
+	UFUNCTION(BlueprintImplementableEvent)
+		void SpawnPistolBullet();
+	UFUNCTION(BlueprintImplementableEvent)
+		void SpawnUziBullet();
 	UFUNCTION()
 	void DetachWeapon();
 	UFUNCTION()
 		void Attach();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input")
+		class UBoxComponent* attachBoxComp;
+
 
 	// 필요속성 : 이동속도, 입력액션, 입력매핑컨텍스트
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
@@ -93,6 +101,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		TSubclassOf<class AActor> BPProjectile;	
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		TSubclassOf<class AActor> BPNoAmmoUI;
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		TSubclassOf<class AActor> BPPunchBoxComp;
 	UPROPERTY(BlueprintReadOnly)
 		class UUserWidget* crosshairUI;
@@ -128,10 +138,12 @@ public:
 	class USoundBase* pistol_pickup;
 	UPROPERTY(EditAnywhere)
 		class UParticleSystem* fireSmokeFactory;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	class APlayerWeapon_Pistol* Pistol;
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	//class APlayerWeapon_Pistol* Pistol;
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		TSubclassOf<class APlayerWeapon_Pistol> pistolFactory;
+
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MotionController")
 		class UMotionControllerComponent* LeftHand;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MotionController")
@@ -141,11 +153,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MotionController")
 		class USkeletalMeshComponent* RightHandMesh;
 	// 집게손가락 표시할 모션컨트롤러
-	UPROPERTY(VisibleAnywhere, Category = "HandComp", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "HandComp", meta = (AllowPrivateAccess = true))
 		class UMotionControllerComponent* RightAim;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 		class UInputMappingContext* IMC_Hand;
+
+	//UPROPERTY()
+		//class APlayerWeapon_Uzi* uziRef;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
@@ -168,6 +183,15 @@ public:
 
 	FTimerHandle fireTimerHandle;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+		FVector pistolFirePos;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+		FVector shotgunFirePos;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+		FVector uziFirePos;
+
+
+	
 	
 
 
