@@ -146,9 +146,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 	FVector leftHandPosition = LeftHand->GetComponentLocation();
 	FVector rightHandPosition = RightHand->GetComponentLocation();
 
-	UE_LOG(LogTemp, Warning, TEXT("leftHandPosition position: %s"), *leftHandPosition.ToString());
-	UE_LOG(LogTemp, Warning, TEXT("rightHandPosition position: %s"), *rightHandPosition.ToString());
-
 
 	// HMD 가 연결돼 있지 않으면
 	if (UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayEnabled() == false)
@@ -220,7 +217,6 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void APlayerCharacter::Move(const FInputActionValue& Values)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Move"))
 		// 사용자의 입력에 따라 앞 , 뒤 , 좌, 우로 이동하고 싶다.
 		// 1. 사용자의 입력에 따라
 	FVector2D Axis = Values.Get<FVector2D>();
@@ -372,7 +368,6 @@ void APlayerCharacter::Fire()
 					int32 randrot = FMath::RandRange(-1, 1);
 					FTransform fireTrans = UKismetMathLibrary::MakeTransform(fireLoc, fireRot+FRotator(randrot, randrot, randrot));
 					CurUziBullet -= 1;
-					UE_LOG(LogTemp, Warning, TEXT("UziAmmo:%d"), CurUziBullet);
 				UGameplayStatics::PlaySound2D(GetWorld(), pistol_fire, 1, 1, 0, nullptr, nullptr, false);
 				GetWorld()->SpawnActor<AActor>(BPProjectile, fireTrans);
 				//bCanFire = false;
