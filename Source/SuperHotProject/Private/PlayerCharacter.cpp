@@ -357,7 +357,7 @@ void APlayerCharacter::Fire()
 			// if using uzi and have ammo
 			if (bCanFire && CurUziBullet > 0)
 			{
-					GetWorld()->GetTimerManager().SetTimer(fireTimerHandle, FTimerDelegate::CreateLambda([this]()->void {
+					/*GetWorld()->GetTimerManager().SetTimer(fireTimerHandle, FTimerDelegate::CreateLambda([this]()->void {
 					if (CurUziBullet <= 0)
 					{
 						GetWorld()->GetTimerManager().ClearTimer(fireTimerHandle);
@@ -372,7 +372,8 @@ void APlayerCharacter::Fire()
 				GetWorld()->SpawnActor<AActor>(BPProjectile, fireTrans);
 				//bCanFire = false;
 				//ResetUziFireCooldown();
-					}), 0.10, true);
+					}), 0.10, true);*/
+				SpawnUziBullet();
 
 			}
 			// if using uzi but have no ammo

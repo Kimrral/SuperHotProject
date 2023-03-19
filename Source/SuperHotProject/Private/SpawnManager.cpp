@@ -27,8 +27,8 @@ void ASpawnManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	AVRGameModeBase* myMode = Cast<AVRGameModeBase>(GetWorld()->GetAuthGameMode());
-	UE_LOG(LogTemp, Warning, TEXT("Total Enemy : %d"), myMode->totalEnemy);
+	//AVRGameModeBase* myMode = Cast<AVRGameModeBase>(GetWorld()->GetAuthGameMode());
+	//UE_LOG(LogTemp, Warning, TEXT("Total Enemy : %d"), myMode->totalEnemy);
 
 }
 
