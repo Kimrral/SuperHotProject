@@ -140,11 +140,11 @@ void AEnemy::GunFire()
 	//UE_LOG(LogTemp, Warning, TEXT("Enemy Fire"));
 
 	if (GetEnemyWeapon() == EEnemyWeapon::Gun) {
-		UGameplayStatics::PlaySound2D(GetWorld(), pistol_fire, 1, 1, 0, nullptr, nullptr, false);
 		FTransform socketTrans = GunMesh->GetSocketTransform(TEXT("FireSocket"));
 		FVector fireLoc = socketTrans.GetLocation();
 		FRotator fireRot = socketTrans.GetRotation().Rotator();
 		FTransform fireTrans = UKismetMathLibrary::MakeTransform(fireLoc,fireRot);
+		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), pistol_fire, fireLoc, fireRot, 0.35, 1, 0, nullptr,nullptr,true);
 		GetWorld()->SpawnActor<AActor>(bulletFactory, fireTrans);
 	}
 }
