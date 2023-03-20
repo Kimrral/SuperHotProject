@@ -45,7 +45,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
 		class UBoxComponent* BoxComp;
 
-	UPROPERTY(EditAnywhere, Category = Settgins)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settgins)
 		class USkeletalMeshComponent* MeshComp;
 
 	UFUNCTION(BlueprintCallable)

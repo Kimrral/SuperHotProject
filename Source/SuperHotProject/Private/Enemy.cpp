@@ -137,7 +137,7 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AEnemy::GunFire()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Enemy Fire"));
+	//UE_LOG(LogTemp, Warning, TEXT("Enemy Fire"));
 
 	if (GetEnemyWeapon() == EEnemyWeapon::Gun) {
 		UGameplayStatics::PlaySound2D(GetWorld(), pistol_fire, 1, 1, 0, nullptr, nullptr, false);
@@ -159,7 +159,7 @@ void AEnemy::OnDieAction(UPrimitiveComponent* OverlappedComponent, AActor* Other
 		}
 		fsm->mState = EEnemyState::Die;
 		*/
-		UE_LOG(LogTemp, Warning, TEXT("Enemy Damage"));
+		//UE_LOG(LogTemp, Warning, TEXT("Enemy Damage"));
 	}
 
 }
@@ -169,12 +169,12 @@ void AEnemy::OnHitHeadAction(UPrimitiveComponent* OverlappedComponent, AActor* O
 	if (OtherActor->GetName().Contains(TEXT("BP_Player")) && !bDead) {
 		bDead = true;
 		fsm->mState = EEnemyState::Die;
-		UE_LOG(LogTemp, Warning, TEXT("Head Hit"));
+		//UE_LOG(LogTemp, Warning, TEXT("Head Hit"));
 	}
 
 	if (OtherActor->GetName().Contains(TEXT("BP_Punch")) && !bHitHead) {
 		bHitHead = true;
-		UE_LOG(LogTemp, Warning, TEXT("Punch Head Hit"));
+		//UE_LOG(LogTemp, Warning, TEXT("Punch Head Hit"));
 	}
 }
 
@@ -183,12 +183,12 @@ void AEnemy::OnHitBodyAction(UPrimitiveComponent* OverlappedComponent, AActor* O
 	if (OtherActor->GetName().Contains(TEXT("BP_Player")) && !bDead) {
 		bDead = true;
 		fsm->mState = EEnemyState::Die;
-		UE_LOG(LogTemp, Warning, TEXT("Body Hit"));
+		//UE_LOG(LogTemp, Warning, TEXT("Body Hit"));
 	}
 
 	if (OtherActor->GetName().Contains(TEXT("BP_Punch")) && !bHitBody) {
 		bHitBody = true;
-		UE_LOG(LogTemp, Warning, TEXT("Punch Body Hit"));
+		//UE_LOG(LogTemp, Warning, TEXT("Punch Body Hit"));
 	}
 }
 
@@ -197,12 +197,12 @@ void AEnemy::OnHitLeftArmAction(UPrimitiveComponent* OverlappedComponent, AActor
 	if (OtherActor->GetName().Contains(TEXT("BP_Player")) && !bDead) {
 		bDead = true;
 		fsm->mState = EEnemyState::Die;
-		UE_LOG(LogTemp, Warning, TEXT("LeftArm Hit"));
+		//UE_LOG(LogTemp, Warning, TEXT("LeftArm Hit"));
 	}
 
 	if (OtherActor->GetName().Contains(TEXT("BP_Punch")) && !bHitLeftArm) {
 		bHitLeftArm = true;
-		UE_LOG(LogTemp, Warning, TEXT("Punch LeftArm Hit"));
+		//UE_LOG(LogTemp, Warning, TEXT("Punch LeftArm Hit"));
 	}
 }
 
@@ -211,13 +211,13 @@ void AEnemy::OnHitLeftlegAction(UPrimitiveComponent* OverlappedComponent, AActor
 	if (OtherActor->GetName().Contains(TEXT("BP_Player")) && !bDead) {
 		bDead = true;
 		fsm->mState = EEnemyState::Die;
-		UE_LOG(LogTemp, Warning, TEXT("LeftLeg Hit"));
+		//UE_LOG(LogTemp, Warning, TEXT("LeftLeg Hit"));
 	}
 
 	if (OtherActor->GetName().Contains(TEXT("BP_Punch")) && !bHitLeftleg) {
 
 		bHitLeftleg = true;
-		UE_LOG(LogTemp, Warning, TEXT("Punch LeftLeg Hit"));
+		//UE_LOG(LogTemp, Warning, TEXT("Punch LeftLeg Hit"));
 	}
 }
 
@@ -226,12 +226,12 @@ void AEnemy::OnHitRightArmAction(UPrimitiveComponent* OverlappedComponent, AActo
 	if (OtherActor->GetName().Contains(TEXT("BP_Player")) && !bDead) {
 		bDead = true;
 		fsm->mState = EEnemyState::Die;
-		UE_LOG(LogTemp, Warning, TEXT("RightArm Hit"));
+		//UE_LOG(LogTemp, Warning, TEXT("RightArm Hit"));
 	}
 
 	if (OtherActor->GetName().Contains(TEXT("BP_Punch")) && !bHitRightArm) {
 		bHitRightArm = true;
-		UE_LOG(LogTemp, Warning, TEXT("Punch RightArm Hit"));
+		//UE_LOG(LogTemp, Warning, TEXT("Punch RightArm Hit"));
 	}
 }
 
@@ -240,12 +240,12 @@ void AEnemy::OnHitRightlegAction(UPrimitiveComponent* OverlappedComponent, AActo
 	if (OtherActor->GetName().Contains(TEXT("BP_Player")) && !bDead) {
 		bDead = true;
 		fsm->mState = EEnemyState::Die;
-		UE_LOG(LogTemp, Warning, TEXT("RightLeg Hit"));
+		//UE_LOG(LogTemp, Warning, TEXT("RightLeg Hit"));
 	}
 
 	if (OtherActor->GetName().Contains(TEXT("BP_Punch")) && !bHitRightleg) {
 		bHitRightleg = true;
-		UE_LOG(LogTemp, Warning, TEXT("Punch RightLeg Hit"));
+		//UE_LOG(LogTemp, Warning, TEXT("Punch RightLeg Hit"));
 	}
 }
 

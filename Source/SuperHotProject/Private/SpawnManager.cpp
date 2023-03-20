@@ -27,11 +27,14 @@ void ASpawnManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//AVRGameModeBase* myMode = Cast<AVRGameModeBase>(GetWorld()->GetAuthGameMode());
+	//UE_LOG(LogTemp, Warning, TEXT("Total Enemy : %d"), myMode->totalEnemy);
+
 }
 
 void ASpawnManager::SpawnEnemy()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Spawn Enemy"));
+	// 적 공장에서 적을 생성하고 싶다.
 	GetWorld()->SpawnActor<AEnemy>(enemyFactory, GetActorLocation(), GetActorRotation());
 	AVRGameModeBase* myMode = Cast<AVRGameModeBase>(GetWorld()->GetAuthGameMode());
 	if (myMode) {
@@ -40,5 +43,6 @@ void ASpawnManager::SpawnEnemy()
 		}
 		myMode->totalEnemy++;
 	}
+	
 }
 

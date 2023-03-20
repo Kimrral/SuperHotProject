@@ -112,7 +112,7 @@ void UEnemyFSM::FistAttackState()
 	currentTime += GetWorld()->DeltaTimeSeconds;
 	ai->MoveToLocation(me->GetActorLocation());
 	if (currentTime > attackDelayTime) {
-		UE_LOG(LogTemp, Warning, TEXT("FistAttack"));
+		//UE_LOG(LogTemp, Warning, TEXT("FistAttack"));
 		currentTime = 0;
 		anim->bAttackPlay = true;
 	}
@@ -146,7 +146,7 @@ void UEnemyFSM::GunAttackState()
 
 void UEnemyFSM::DieState()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Die!!!!!!!!!"));
+	//UE_LOG(LogTemp, Warning, TEXT("Die!!!!!!!!!"));
 	ai->StopMovement();
 	mState = EEnemyState::Die;
 	anim->animState = mState;
