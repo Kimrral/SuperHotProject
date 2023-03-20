@@ -39,12 +39,15 @@ public:
 	void JumpEnd();
 	void Fire();
 	void FireReleased();
+	void FireLeft();
 	void Throw();
 	void Unequip();
 	UFUNCTION(BlueprintCallable)
 	bool IsMoving();
 	UFUNCTION(BlueprintImplementableEvent)
 	void ResetFireCooldown();
+	UFUNCTION(BlueprintImplementableEvent)
+		void ResetFireCooldownLeft();
 	UFUNCTION(BlueprintImplementableEvent)
 	void ResetUziFireCooldown();
 	UFUNCTION(BlueprintImplementableEvent)
@@ -55,6 +58,8 @@ public:
 		void SpawnPistolBullet();
 	UFUNCTION(BlueprintImplementableEvent)
 		void SpawnUziBullet();
+	UFUNCTION(BlueprintImplementableEvent)
+		void SpawnUziBulletLeft();
 	UFUNCTION()
 	void DetachWeapon();
 	UFUNCTION()
@@ -62,6 +67,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input")
 		class UBoxComponent* attachBoxComp;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input")
+		class UBoxComponent* attachBoxCompL;
 
 
 	// 필요속성 : 이동속도, 입력액션, 입력매핑컨텍스트
@@ -80,6 +88,8 @@ public:
 		class UInputAction* IA_Jump;
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 		class UInputAction* IA_Fire;
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+		class UInputAction* IA_FireL;
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 		class UInputAction* IA_Throw;
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
@@ -119,11 +129,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool isWeaponEquipped = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool isLeftWeaponEquipped = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool isUsingShotgun = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool isUsingShotgunLeft = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool isUsingUzi = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool isUsingUziLeft = false;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		bool bCanFire = true;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+		bool bCanFireLeft = true;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	bool isEnterUIEnd = false;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
@@ -142,7 +160,7 @@ public:
 	//class APlayerWeapon_Pistol* Pistol;
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		TSubclassOf<class APlayerWeapon_Pistol> pistolFactory;
-
+	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MotionController")
 		class UMotionControllerComponent* LeftHand;
@@ -180,6 +198,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
 		int32 CurUziBullet;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+		int32 MaxUziBulletLeft = 15;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
+		int32 CurUziBulletLeft;
 
 	FTimerHandle fireTimerHandle;
 
